@@ -243,16 +243,19 @@ letter-spacing: .8px;
 margin-bottom: 6px;
 }
 .kpi-value {
-font-size: 22px;
+font-size: 20px;
 font-weight: 800;
-letter-spacing: -1px;
-line-height: 1;
+letter-spacing: -0.5px;
+line-height: 1.1;
 }
 .kpi-sub {
 font-family: ‘DM Mono’, monospace;
-font-size: 10px;
+font-size: 9px;
 color: var(–muted2);
 margin-top: 4px;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
 }
 .kpi-positive { color: var(–green); }
 .kpi-negative { color: var(–red); }
@@ -288,9 +291,12 @@ padding: 2px 0;
 }
 .legend-item:active { opacity: .6; }
 .legend-dot {
-width: 8px; height: 8px;
+width: 10px; height: 10px;
 border-radius: 50%;
 flex-shrink: 0;
+display: inline-block;
+-webkit-print-color-adjust: exact;
+print-color-adjust: exact;
 }
 .legend-name { font-size: 12px; font-weight: 600; flex: 1; }
 .legend-pct {
@@ -620,17 +626,6 @@ transition: opacity .15s; letter-spacing: .2px;
 cursor: pointer;
 transition: border-color .2s, background .2s;
 -webkit-tap-highlight-color: transparent;
-position: relative;
-}
-.kpi-clickable::after {
-content: ‘’;
-position: absolute;
-top: 50%; right: 14px;
-transform: translateY(-50%);
-width: 6px; height: 6px;
-border-right: 2px solid var(–muted);
-border-top: 2px solid var(–muted);
-transform: translateY(-50%) rotate(45deg);
 }
 .kpi-clickable:active {
 border-color: var(–accent);
@@ -656,24 +651,24 @@ background: #7c6af710;
 <div class="page active" id="page-dashboard">
   <div class="kpi-row">
     <div class="kpi kpi-clickable" onclick="openKpiDetail('card')">
-      <div class="kpi-label">Credit Card</div>
+      <div class="kpi-label">Credit Card ›</div>
       <div class="kpi-value kpi-negative" id="kpi-card">R$ 8,652</div>
-      <div class="kpi-sub">53% of salary  ›</div>
+      <div class="kpi-sub">53% of salary</div>
     </div>
     <div class="kpi kpi-clickable" onclick="openKpiDetail('fixed')">
-      <div class="kpi-label">Fixed Costs</div>
+      <div class="kpi-label">Fixed Costs ›</div>
       <div class="kpi-value kpi-negative" id="kpi-fixed">R$ 6,300</div>
-      <div class="kpi-sub">Rent · fuel · pet · sports  ›</div>
+      <div class="kpi-sub">Rent · fuel · pet · sports</div>
     </div>
     <div class="kpi kpi-clickable" onclick="openKpiDetail('invest')">
-      <div class="kpi-label">Investment</div>
+      <div class="kpi-label">Investment ›</div>
       <div class="kpi-value kpi-accent" id="kpi-invest">R$ 3,000</div>
-      <div class="kpi-sub">18.5% of salary  ›</div>
+      <div class="kpi-sub">18.5% of salary</div>
     </div>
     <div class="kpi kpi-clickable" onclick="openKpiDetail('balance')">
-      <div class="kpi-label">Free Balance</div>
+      <div class="kpi-label">Free Balance ›</div>
       <div class="kpi-value kpi-yellow" id="kpi-balance">−R$ 1,757</div>
-      <div class="kpi-sub">May summary  ›</div>
+      <div class="kpi-sub">May summary</div>
     </div>
   </div>
 
@@ -1267,7 +1262,7 @@ function buildDonut() {
     item.className = 'legend-item';
     item.onclick = () => openDetail(cat);
     item.innerHTML = `
-      <div class="legend-dot" style="background:${meta.color}"></div>
+      <div class="legend-dot" style="background-color:${meta.color};box-shadow:0 0 0 2px ${meta.color}40;min-width:10px;min-height:10px;"></div>
       <span class="legend-name">${cat}</span>
       <span class="legend-pct">${pct}%</span>
       <span class="legend-val">${fmtShort(val)}</span>
