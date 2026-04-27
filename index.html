@@ -276,8 +276,7 @@ align-items: center;
 gap: 16px;
 padding: 4px 0;
 }
-.donut-svg { flex-shrink: 0; cursor: pointer; }
-.donut-svg circle { transition: opacity .2s, stroke-width .2s; }
+#donut { flex-shrink: 0; cursor: pointer; }
 .legend { flex: 1; display: flex; flex-direction: column; gap: 7px; }
 .legend-item {
 display: flex;
@@ -681,7 +680,7 @@ background: #7c6af710;
   <div class="section-title">Spending by Category</div>
   <div class="card">
     <div class="chart-wrap">
-      <svg class="donut-svg" id="donut" width="130" height="130" viewBox="0 0 130 130"></svg>
+      <canvas id="donut" width="260" height="260" style="width:130px;height:130px;flex-shrink:0;cursor:pointer;"></canvas>
       <div class="legend" id="legend"></div>
     </div>
   </div>
@@ -1172,8 +1171,10 @@ function fmtShort(v) {
 }
 
 // ═══════════════════════════════════════════════════════
-// DONUT CHART
+// DONUT CHART — Canvas (Safari-proof, no SVG quirks)
 // ═══════════════════════════════════════════════════════
+let _donutData = []; // store for click detection
+
 function buildDonut() {
   const catMap = {};
   TRANSACTIONS.forEach(t => {
@@ -1182,66 +1183,85 @@ function buildDonut() {
   const total = Object.values(catMap).reduce((a,b)=>a+b, 0);
   const sorted = Object.entries(catMap).sort((a,b)=>b[1]-a[1]).slice(0,7);
 
-  const svg = document.getElementById('donut');
-  const cx = 65, cy = 65, r = 50, strokeW = 18;
-  const circum = 2 * Math.PI * r;
-  let offset = 0;
+  const canvas = document.getElementById('donut');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W/2, cy = H/2;
+  const outerR = W * 0.42;
+  const innerR = W * 0.27;
+  const gap = 0.018; // gap between segments in radians
 
-  svg.innerHTML = '';
-  // bg circle
-  const bg = document.createElementNS('http://www.w3.org/2000/svg','circle');
-  bg.setAttribute('cx',cx); bg.setAttribute('cy',cy); bg.setAttribute('r',r);
-  bg.setAttribute('fill','none'); bg.setAttribute('stroke','#ffffff08');
-  bg.setAttribute('stroke-width',strokeW);
-  svg.appendChild(bg);
+  ctx.clearRect(0, 0, W, H);
 
-  sorted.forEach(([cat, val], i) => {
-    const meta = CAT_META[cat] || {color:'var(--c-other)'};
-    const pct = val / total;
-    const dash = pct * circum;
-    const gap = circum - dash;
+  // background ring
+  ctx.beginPath();
+  ctx.arc(cx, cy, (outerR+innerR)/2, 0, Math.PI*2);
+  ctx.lineWidth = outerR - innerR;
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx.stroke();
 
-    const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    circle.setAttribute('cx',cx); circle.setAttribute('cy',cy); circle.setAttribute('r',r);
-    circle.setAttribute('fill','none');
-    circle.setAttribute('stroke', meta.color);
-    circle.setAttribute('stroke-width', strokeW);
-    circle.setAttribute('stroke-dasharray', `${dash} ${gap}`);
-    circle.setAttribute('stroke-dashoffset', -offset * circum + circum/4);
-    circle.setAttribute('data-cat', cat);
-    circle.style.cursor = 'pointer';
-    circle.style.transition = 'stroke-width .2s, opacity .2s';
-    circle.addEventListener('click', () => openDetail(cat));
-    circle.addEventListener('mouseenter', () => circle.setAttribute('stroke-width', strokeW+4));
-    circle.addEventListener('mouseleave', () => circle.setAttribute('stroke-width', strokeW));
-    svg.appendChild(circle);
-    offset += pct;
+  // draw segments
+  let startAngle = -Math.PI/2;
+  _donutData = [];
+
+  sorted.forEach(([cat, val]) => {
+    const meta = CAT_META[cat] || {color:'#94a3b8'};
+    const sliceAngle = (val/total) * Math.PI * 2;
+    const endAngle = startAngle + sliceAngle - gap;
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, (outerR+innerR)/2, startAngle + gap/2, endAngle);
+    ctx.lineWidth = outerR - innerR;
+    ctx.strokeStyle = meta.color;
+    ctx.lineCap = 'butt';
+    ctx.stroke();
+
+    // store segment data for click detection
+    _donutData.push({
+      cat, startAngle: startAngle + gap/2, endAngle,
+      innerR, outerR, cx, cy
+    });
+
+    startAngle += sliceAngle;
   });
 
   // center text
-  const text1 = document.createElementNS('http://www.w3.org/2000/svg','text');
-  text1.setAttribute('x',cx); text1.setAttribute('y',cy-4);
-  text1.setAttribute('text-anchor','middle');
-  text1.setAttribute('fill','#f0f0f5');
-  text1.setAttribute('font-size','12');
-  text1.setAttribute('font-family','Nunito,sans-serif');
-  text1.setAttribute('font-weight','700');
-  text1.textContent = fmtShort(total);
-  svg.appendChild(text1);
-  const text2 = document.createElementNS('http://www.w3.org/2000/svg','text');
-  text2.setAttribute('x',cx); text2.setAttribute('y',cy+12);
-  text2.setAttribute('text-anchor','middle');
-  text2.setAttribute('fill','#6b6b80');
-  text2.setAttribute('font-size','9');
-  text2.setAttribute('font-family','DM Mono,monospace');
-  text2.textContent = 'total';
-  svg.appendChild(text2);
+  ctx.fillStyle = '#f0f0f5';
+  ctx.font = 'bold 22px -apple-system, Nunito, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(fmtShort(total), cx, cy - 8);
+
+  ctx.fillStyle = '#6b6b80';
+  ctx.font = '14px ui-monospace, DM Mono, monospace';
+  ctx.fillText('total', cx, cy + 14);
+
+  // click handler
+  canvas.onclick = (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = W / rect.width;
+    const scaleY = H / rect.height;
+    const x = (e.clientX - rect.left) * scaleX - cx;
+    const y = (e.clientY - rect.top)  * scaleY - cy;
+    const dist = Math.sqrt(x*x + y*y);
+    let angle = Math.atan2(y, x);
+    if (angle < -Math.PI/2) angle += Math.PI*2;
+
+    for (const seg of _donutData) {
+      if (dist >= seg.innerR && dist <= seg.outerR) {
+        let sa = seg.startAngle < -Math.PI/2 ? seg.startAngle + Math.PI*2 : seg.startAngle;
+        let ea = seg.endAngle   < -Math.PI/2 ? seg.endAngle   + Math.PI*2 : seg.endAngle;
+        let a  = angle < sa - 0.1 ? angle + Math.PI*2 : angle;
+        if (a >= sa && a <= ea) { openDetail(seg.cat); return; }
+      }
+    }
+  };
 
   // legend
   const legend = document.getElementById('legend');
   legend.innerHTML = '';
   sorted.forEach(([cat, val]) => {
-    const meta = CAT_META[cat] || {color:'var(--c-other)'};
+    const meta = CAT_META[cat] || {color:'#94a3b8'};
     const pct = ((val/total)*100).toFixed(0);
     const item = document.createElement('div');
     item.className = 'legend-item';
