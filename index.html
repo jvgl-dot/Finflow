@@ -18,8 +18,8 @@
   --bg:        #0a0a0f;
   --bg2:       #111118;
   --bg3:       #1a1a24;
-  --border:    #ffffff0f;
-  --border2:   #ffffff18;
+  --border:    #ffffff18;
+  --border2:   #ffffff28;
   --text:      #f0f0f5;
   --muted:     #6b6b80;
   --muted2:    #9090a8;
@@ -182,14 +182,15 @@ color: var(–muted);
 /* ── CARDS ───────────────────────────────────────────── */
 .card {
 background: var(–bg2);
-border: 1px solid var(–border);
+border: 1.5px solid var(–border2);
 border-radius: var(–radius);
 padding: 16px;
 margin-bottom: 12px;
+box-shadow: 0 2px 12px #00000030;
 }
 .card-sm {
 background: var(–bg3);
-border: 1px solid var(–border);
+border: 1.5px solid var(–border2);
 border-radius: var(–radius-sm);
 padding: 14px;
 }
@@ -204,9 +205,10 @@ margin-bottom: 12px;
 .kpi-wide { grid-column: 1/-1; }
 .kpi {
 background: var(–bg2);
-border: 1px solid var(–border);
+border: 1.5px solid var(–border2);
 border-radius: var(–radius);
 padding: 16px;
+box-shadow: 0 2px 12px #00000030;
 }
 .kpi-label {
 font-family: ‘DM Mono’, monospace;
@@ -595,6 +597,17 @@ transition: opacity .15s; letter-spacing: .2px;
 cursor: pointer;
 transition: border-color .2s, background .2s;
 -webkit-tap-highlight-color: transparent;
+position: relative;
+}
+.kpi-clickable::after {
+content: ‘’;
+position: absolute;
+top: 50%; right: 14px;
+transform: translateY(-50%);
+width: 6px; height: 6px;
+border-right: 2px solid var(–muted);
+border-top: 2px solid var(–muted);
+transform: translateY(-50%) rotate(45deg);
 }
 .kpi-clickable:active {
 border-color: var(–accent);
@@ -619,7 +632,7 @@ background: #7c6af710;
 <!-- ── DASHBOARD ── -->
 <div class="page active" id="page-dashboard">
   <div class="kpi-row">
-    <div class="kpi kpi-wide">
+    <div class="kpi kpi-wide" style="border-color:#3ecf8e44;background:linear-gradient(135deg,#111118,#0f1f18)">
       <div class="kpi-label">Monthly Salary</div>
       <div class="kpi-value kpi-positive">R$ 16,195</div>
       <div class="kpi-sub">Received by the 7th · due date matches</div>
@@ -1370,7 +1383,7 @@ function buildForecast() {
     el.className = 'timeline-month';
     el.innerHTML = `
       <div class="timeline-month-header" onclick="this.nextElementSibling.classList.toggle('open')">
-        <div class="timeline-month-name">${m.month} 2025</div>
+        <div class="timeline-month-name">${m.month}</div>
         <div style="display:flex;align-items:center;gap:10px">
           <div style="font-family:'DM Mono',monospace;font-size:11px;color:${balColor}">${m.balance>0?'+':''}${fmtShort(m.balance)}</div>
           <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted2)">${fmtShort(m.card)}</div>
