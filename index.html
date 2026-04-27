@@ -83,6 +83,7 @@ background: var(–bg);
 padding-top: var(–safe-top);
 padding-bottom: var(–safe-bottom);
 box-shadow: 0 0 80px #00000088;
+overflow: hidden;
 }
 
 /* ── HEADER ─────────────────────────────────────────── */
@@ -136,18 +137,22 @@ transform: translateX(0);
 }
 .page.slide-from-right { transform: translateX(60px); }
 .detail-page {
-position: absolute;
-inset: 0;
+position: fixed;
+top: 0; bottom: 0;
+left: 50%;
+width: 100%;
+max-width: 480px;
+transform: translateX(-50%) translateX(100vw);
 overflow-y: auto;
 background: var(–bg);
-z-index: 50;
+z-index: 80;
 padding: 0 16px 20px;
-transform: translateX(100%);
 transition: transform .3s cubic-bezier(.4,0,.2,1);
 -webkit-overflow-scrolling: touch;
-max-width: 480px;
 }
-.detail-page.open { transform: translateX(0); }
+.detail-page.open {
+transform: translateX(-50%) translateX(0);
+}
 
 /* ── NAV ─────────────────────────────────────────────── */
 .nav {
@@ -603,7 +608,7 @@ background: #7c6af710;
   <!-- HEADER -->
   <div class="header">
     <div class="header-logo">Finflow</div>
-    <div class="header-month">May 2025</div>
+    <div class="header-month">May 2026</div>
   </div>
 
   <!-- PAGES -->
@@ -917,17 +922,17 @@ background: #7c6af710;
     </div>
   </div>
 
-  <!-- FAB -->
+  <!-- FAB (inside app for proper positioning) -->
 
 <button id="fab" onclick="openAddModal()" style="
-position:fixed;right:calc(50% - 220px);bottom:calc(var(--safe-bottom) + 72px);
+position:absolute;right:20px;bottom:80px;
 width:56px;height:56px;border-radius:50%;
 background:linear-gradient(135deg,var(--accent),var(--accent2));
 border:none;color:#fff;font-size:28px;font-weight:300;
 box-shadow:0 4px 24px #7c6af766;cursor:pointer;z-index:90;
 display:flex;align-items:center;justify-content:center;
 transition:transform .15s,box-shadow .15s;line-height:1;
-" onmouseenter="this.style.transform='scale(1.08)'" onmouseleave="this.style.transform='scale(1)'">+</button>
+">+</button>
 
   <!-- NAV -->
 
@@ -973,22 +978,22 @@ const IS_SANDBOXED = (() => {
 // DATA
 // ═══════════════════════════════════════════════════════
 const CAT_META = {
-  "Food":         { color: "var(--c-food)",         emoji: "🍽️" },
-  "Home":         { color: "var(--c-home)",         emoji: "🏠" },
-  "Sports":       { color: "var(--c-sports)",       emoji: "🏋️" },
-  "Transport":    { color: "var(--c-transport)",    emoji: "🚗" },
-  "Pet":          { color: "var(--c-pet)",          emoji: "🐾" },
-  "Streaming":    { color: "var(--c-streaming)",    emoji: "📺" },
-  "Car":          { color: "var(--c-car)",          emoji: "⛽" },
-  "Health":       { color: "var(--c-health)",       emoji: "💊" },
-  "Supermarket":  { color: "var(--c-supermarket)",  emoji: "🛒" },
-  "Book":         { color: "var(--c-book)",         emoji: "📚" },
-  "Other":        { color: "var(--c-other)",        emoji: "📦" },
-  "Entertainment":{ color: "var(--c-entertainment)",emoji: "🎉" },
-  "Fashion":      { color: "var(--c-fashion)",      emoji: "👟" },
-  "Fuel":         { color: "var(--c-fuel)",         emoji: "⛽" },
-  "Online":       { color: "var(--c-online)",       emoji: "🛍️" },
-  "Subscription": { color: "var(--c-subscription)", emoji: "🔔" },
+  "Food":         { color: "var(--c-food)",         emoji: "&#x1F37D;" },
+  "Home":         { color: "var(--c-home)",         emoji: "&#x1F3E0;" },
+  "Sports":       { color: "var(--c-sports)",       emoji: "&#x1F3CB;" },
+  "Transport":    { color: "var(--c-transport)",    emoji: "&#x1F697;" },
+  "Pet":          { color: "var(--c-pet)",          emoji: "&#x1F43E;" },
+  "Streaming":    { color: "var(--c-streaming)",    emoji: "&#x1F4FA;" },
+  "Car":          { color: "var(--c-car)",          emoji: "&#x26FD;" },
+  "Health":       { color: "var(--c-health)",       emoji: "&#x1F48A;" },
+  "Supermarket":  { color: "var(--c-supermarket)",  emoji: "&#x1F6D2;" },
+  "Book":         { color: "var(--c-book)",         emoji: "&#x1F4DA;" },
+  "Other":        { color: "var(--c-other)",        emoji: "&#x1F4E6;" },
+  "Entertainment":{ color: "var(--c-entertainment)",emoji: "&#x1F389;" },
+  "Fashion":      { color: "var(--c-fashion)",      emoji: "&#x1F45F;" },
+  "Fuel":         { color: "var(--c-fuel)",         emoji: "&#x26FD;" },
+  "Online":       { color: "var(--c-online)",       emoji: "&#x1F6CD;" },
+  "Subscription": { color: "var(--c-subscription)", emoji: "&#x1F514;" },
 };
 
 const TRANSACTIONS = [
@@ -1081,13 +1086,13 @@ const INSTALLMENTS = [
 ];
 
 const FORECAST = [
-  {month:"June",    card:3871, invest:4000, balance:166},
-  {month:"July",    card:2692, invest:4858, balance:2345},
-  {month:"August",  card:2692, invest:4858, balance:2345},
-  {month:"September",card:2580,invest:4858, balance:2415},
-  {month:"October", card:2450, invest:4858, balance:2545},
-  {month:"November",card:1323, invest:4858, balance:3714},
-  {month:"December",card:1600, invest:4858, balance:3437},
+  {month:"June 2026",    card:3871, invest:4000, balance:166},
+  {month:"July 2026",    card:2692, invest:4858, balance:2345},
+  {month:"August 2026",  card:2692, invest:4858, balance:2345},
+  {month:"September 2026",card:2580,invest:4858, balance:2415},
+  {month:"October 2026", card:2450, invest:4858, balance:2545},
+  {month:"November 2026",card:1323, invest:4858, balance:3714},
+  {month:"December 2026",card:1600, invest:4858, balance:3437},
 ];
 
 const FIXED = [
@@ -1516,10 +1521,10 @@ buildCatChips();
 // FIXED COSTS DATA (mutable)
 // ═══════════════════════════════════════════════════════
 let FIXED_COSTS = [
-  {id:1, label:"Rent",    sub:"Monthly",               val:4500, icon:"🏠", color:"var(--c-home)"},
-  {id:2, label:"Sports",  sub:"Coaching + supplements", val:1000, icon:"🏋️", color:"var(--c-sports)"},
-  {id:3, label:"Fuel",    sub:"Estimated monthly",      val:500,  icon:"⛽", color:"var(--c-fuel)"},
-  {id:4, label:"Pet food",sub:"Dog food",               val:300,  icon:"🐾", color:"var(--c-pet)"},
+  {id:1, label:"Rent",    sub:"Monthly",               val:4500, icon:"&#x1F3E0;", color:"var(--c-home)"},
+  {id:2, label:"Sports",  sub:"Coaching + supplements", val:1000, icon:"&#x1F3CB;", color:"var(--c-sports)"},
+  {id:3, label:"Fuel",    sub:"Estimated monthly",      val:500,  icon:"&#x26FD;", color:"var(--c-fuel)"},
+  {id:4, label:"Pet food",sub:"Dog food",               val:300,  icon:"&#x1F43E;", color:"var(--c-pet)"},
 ];
 let fixedEditId = null; // null = new
 
@@ -1734,7 +1739,7 @@ function saveFixed() {
   if (fixedEditId === null) {
     // add new
     const newId = Math.max(0, ...FIXED_COSTS.map(c=>c.id)) + 1;
-    FIXED_COSTS.push({id:newId, label, sub:note||'Monthly', val:amount, icon:'📌', color:'var(--c-other)'});
+    FIXED_COSTS.push({id:newId, label, sub:note||'Monthly', val:amount, icon:'&#x1F4CC;', color:'var(--c-other)'});
   } else {
     // edit existing
     const cost = FIXED_COSTS.find(c=>c.id===fixedEditId);
@@ -1820,7 +1825,7 @@ function buildInvestDetail(body) {
   [4000,4858,4858,4858,4858,4858,4858].forEach((ap,i) => {
     const rend = bal * rate;
     bal = bal + rend + ap;
-    rows.push({month:['Jun','Jul','Aug','Sep','Oct','Nov','Dec'][i], aporte:ap, rend, total:bal});
+    rows.push({month:['Jun 26','Jul 26','Aug 26','Sep 26','Oct 26','Nov 26','Dec 26'][i], aporte:ap, rend, total:bal});
   });
 
   body.innerHTML = `
@@ -1834,7 +1839,7 @@ function buildInvestDetail(body) {
         <div style="font-size:20px;font-weight:800;color:var(--green)">10%</div>
       </div>
       <div class="card-sm" style="grid-column:1/-1">
-        <div class="kpi-label">Projected Dec 2025</div>
+        <div class="kpi-label">Projected Dec 2026</div>
         <div style="font-size:24px;font-weight:800;color:var(--accent2)">R$ ${rows[rows.length-1].total.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0})}</div>
       </div>
     </div>
