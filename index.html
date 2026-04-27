@@ -18,8 +18,8 @@
   --bg:        #0a0a0f;
   --bg2:       #111118;
   --bg3:       #1a1a24;
-  --border:    #ffffff18;
-  --border2:   #ffffff28;
+  --border:    #ffffff22;
+  --border2:   #3a3a50;
   --text:      #f0f0f5;
   --muted:     #6b6b80;
   --muted2:    #9090a8;
@@ -632,11 +632,6 @@ background: #7c6af710;
 <!-- ── DASHBOARD ── -->
 <div class="page active" id="page-dashboard">
   <div class="kpi-row">
-    <div class="kpi kpi-wide" style="border-color:#3ecf8e44;background:linear-gradient(135deg,#111118,#0f1f18)">
-      <div class="kpi-label">Monthly Salary</div>
-      <div class="kpi-value kpi-positive">R$ 16,195</div>
-      <div class="kpi-sub">Received by the 7th · due date matches</div>
-    </div>
     <div class="kpi kpi-clickable" onclick="openKpiDetail('card')">
       <div class="kpi-label">Credit Card</div>
       <div class="kpi-value kpi-negative" id="kpi-card">R$ 8,652</div>
@@ -644,7 +639,7 @@ background: #7c6af710;
     </div>
     <div class="kpi kpi-clickable" onclick="openKpiDetail('fixed')">
       <div class="kpi-label">Fixed Costs</div>
-      <div class="kpi-value" style="font-size:20px" id="kpi-fixed">R$ 6,300</div>
+      <div class="kpi-value kpi-negative" id="kpi-fixed">R$ 6,300</div>
       <div class="kpi-sub">Rent · fuel · pet · sports  ›</div>
     </div>
     <div class="kpi kpi-clickable" onclick="openKpiDetail('invest')">
@@ -1172,7 +1167,7 @@ function buildDonut() {
     const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
     circle.setAttribute('cx',cx); circle.setAttribute('cy',cy); circle.setAttribute('r',r);
     circle.setAttribute('fill','none');
-    circle.setAttribute('stroke', meta.color.replace('var(','').replace(')',''));
+    circle.setAttribute('stroke', meta.color);
     circle.setAttribute('stroke-width', strokeW);
     circle.setAttribute('stroke-dasharray', `${dash} ${gap}`);
     circle.setAttribute('stroke-dashoffset', -offset * circum + circum/4);
@@ -1534,10 +1529,10 @@ buildCatChips();
 // FIXED COSTS DATA (mutable)
 // ═══════════════════════════════════════════════════════
 let FIXED_COSTS = [
-  {id:1, label:"Rent",    sub:"Monthly",               val:4500, icon:"&#x1F3E0;", color:"var(--c-home)"},
-  {id:2, label:"Sports",  sub:"Coaching + supplements", val:1000, icon:"&#x1F3CB;", color:"var(--c-sports)"},
-  {id:3, label:"Fuel",    sub:"Estimated monthly",      val:500,  icon:"&#x26FD;", color:"var(--c-fuel)"},
-  {id:4, label:"Pet food",sub:"Dog food",               val:300,  icon:"&#x1F43E;", color:"var(--c-pet)"},
+  {id:1, label:"Rent",    sub:"Monthly",               val:4500, icon:"&#x1F3E0;", color:"#7c6af7"},
+  {id:2, label:"Sports",  sub:"Coaching + supplements", val:1000, icon:"&#x1F3CB;", color:"#f5c842"},
+  {id:3, label:"Fuel",    sub:"Estimated monthly",      val:500,  icon:"&#x26FD;", color:"#fbbf24"},
+  {id:4, label:"Pet food",sub:"Dog food",               val:300,  icon:"&#x1F43E;", color:"#fb923c"},
 ];
 let fixedEditId = null; // null = new
 
