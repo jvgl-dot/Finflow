@@ -136,9 +136,9 @@ isolation: isolate;
 .page {
 position: absolute;
 inset: 0;
-overflow-y: scroll;
+overflow-y: auto;
 overflow-x: hidden;
-padding: 0 16px 20px;
+padding: 4px 16px 20px;
 opacity: 0;
 pointer-events: none;
 transform: translateX(30px);
@@ -1025,22 +1025,22 @@ const IS_SANDBOXED = (() => {
 // DATA
 // ═══════════════════════════════════════════════════════
 const CAT_META = {
-  "Food":         { color: "var(--c-food)",         emoji: "&#x1F37D;" },
-  "Home":         { color: "var(--c-home)",         emoji: "&#x1F3E0;" },
-  "Sports":       { color: "var(--c-sports)",       emoji: "&#x1F3CB;" },
-  "Transport":    { color: "var(--c-transport)",    emoji: "&#x1F697;" },
-  "Pet":          { color: "var(--c-pet)",          emoji: "&#x1F43E;" },
-  "Streaming":    { color: "var(--c-streaming)",    emoji: "&#x1F4FA;" },
-  "Car":          { color: "var(--c-car)",          emoji: "&#x26FD;" },
-  "Health":       { color: "var(--c-health)",       emoji: "&#x1F48A;" },
-  "Supermarket":  { color: "var(--c-supermarket)",  emoji: "&#x1F6D2;" },
-  "Book":         { color: "var(--c-book)",         emoji: "&#x1F4DA;" },
-  "Other":        { color: "var(--c-other)",        emoji: "&#x1F4E6;" },
-  "Entertainment":{ color: "var(--c-entertainment)",emoji: "&#x1F389;" },
-  "Fashion":      { color: "var(--c-fashion)",      emoji: "&#x1F45F;" },
-  "Fuel":         { color: "var(--c-fuel)",         emoji: "&#x26FD;" },
-  "Online":       { color: "var(--c-online)",       emoji: "&#x1F6CD;" },
-  "Subscription": { color: "var(--c-subscription)", emoji: "&#x1F514;" },
+  "Food":          { color: "#3ecf8e", emoji: "&#x1F37D;" },
+  "Home":          { color: "#7c6af7", emoji: "&#x1F3E0;" },
+  "Sports":        { color: "#f5c842", emoji: "&#x1F3CB;" },
+  "Transport":     { color: "#38bdf8", emoji: "&#x1F697;" },
+  "Pet":           { color: "#fb923c", emoji: "&#x1F43E;" },
+  "Streaming":     { color: "#a78bfa", emoji: "&#x1F4FA;" },
+  "Car":           { color: "#64748b", emoji: "&#x26FD;" },
+  "Health":        { color: "#34d399", emoji: "&#x1F48A;" },
+  "Supermarket":   { color: "#4ade80", emoji: "&#x1F6D2;" },
+  "Book":          { color: "#818cf8", emoji: "&#x1F4DA;" },
+  "Other":         { color: "#94a3b8", emoji: "&#x1F4E6;" },
+  "Entertainment": { color: "#e879f9", emoji: "&#x1F389;" },
+  "Fashion":       { color: "#f472b6", emoji: "&#x1F45F;" },
+  "Fuel":          { color: "#fbbf24", emoji: "&#x26FD;" },
+  "Online":        { color: "#60a5fa", emoji: "&#x1F6CD;" },
+  "Subscription":  { color: "#c084fc", emoji: "&#x1F514;" },
 };
 
 const TRANSACTIONS = [
@@ -1617,37 +1617,40 @@ function updateFixedKpi() {
 // KPI DETAIL PAGE
 // ═══════════════════════════════════════════════════════
 function openKpiDetail(type) {
-  const page = document.getElementById('kpi-detail-page');
-  const title = document.getElementById('kpi-detail-title');
-  const subtitle = document.getElementById('kpi-detail-subtitle');
-  const body = document.getElementById('kpi-detail-body');
-  const addBtn = document.getElementById('kpi-detail-add-btn');
-  body.innerHTML = '';
+  try {
+    const page = document.getElementById('kpi-detail-page');
+    const title = document.getElementById('kpi-detail-title');
+    const subtitle = document.getElementById('kpi-detail-subtitle');
+    const body = document.getElementById('kpi-detail-body');
+    const addBtn = document.getElementById('kpi-detail-add-btn');
+    body.innerHTML = '';
+    addBtn.style.display = 'none';
 
-  if (type === 'fixed') {
-    title.textContent = 'Fixed Costs';
-    subtitle.textContent = 'Monthly recurring expenses';
-    addBtn.style.display = 'flex';
-    buildFixedDetail(body);
-  } else if (type === 'card') {
-    title.textContent = 'Credit Card';
-    subtitle.textContent = 'Statement + installments this month';
-    addBtn.style.display = 'none';
-    buildCardDetail(body);
-  } else if (type === 'invest') {
-    title.textContent = 'Investment';
-    subtitle.textContent = 'Monthly contribution goal';
-    addBtn.style.display = 'none';
-    buildInvestDetail(body);
-  } else if (type === 'balance') {
-    title.textContent = 'Free Balance';
-    subtitle.textContent = 'What remains after all outflows';
-    addBtn.style.display = 'none';
-    buildBalanceDetail(body);
+    if (type === 'fixed') {
+      title.textContent = 'Fixed Costs';
+      subtitle.textContent = 'Monthly recurring expenses';
+      addBtn.style.display = 'flex';
+      buildFixedDetail(body);
+    } else if (type === 'card') {
+      title.textContent = 'Credit Card';
+      subtitle.textContent = 'Statement + installments this month';
+      buildCardDetail(body);
+    } else if (type === 'invest') {
+      title.textContent = 'Investment';
+      subtitle.textContent = 'Monthly contribution goal';
+      buildInvestDetail(body);
+    } else if (type === 'balance') {
+      title.textContent = 'Free Balance';
+      subtitle.textContent = 'What remains after all outflows';
+      buildBalanceDetail(body);
+    }
+
+    constrainDetailPage('kpi-detail-page');
+    page.classList.add('open');
+  } catch(e) {
+    console.error('openKpiDetail error:', e);
+    alert('Error opening detail: ' + e.message);
   }
-
-  constrainDetailPage('kpi-detail-page');
-  page.classList.add('open');
 }
 
 function closeKpiDetail() {
