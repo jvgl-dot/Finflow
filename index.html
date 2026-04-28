@@ -136,7 +136,7 @@ isolation: isolate;
 .page {
 position: absolute;
 inset: 0;
-overflow-y: auto;
+overflow-y: scroll;
 overflow-x: hidden;
 padding: 0 16px 20px;
 opacity: 0;
@@ -144,7 +144,10 @@ pointer-events: none;
 transform: translateX(30px);
 transition: opacity .25s ease, transform .25s ease;
 -webkit-overflow-scrolling: touch;
+scrollbar-width: none;
+-ms-overflow-style: none;
 }
+.page::-webkit-scrollbar { display: none; }
 .page.active {
 opacity: 1;
 pointer-events: all;
@@ -162,6 +165,8 @@ background: #0a0a0f;
 z-index: 999;
 padding: env(safe-area-inset-top, 20px) 16px calc(env(safe-area-inset-bottom, 0px) + 80px);
 -webkit-overflow-scrolling: touch;
+scrollbar-width: none;
+-ms-overflow-style: none;
 visibility: hidden;
 opacity: 0;
 transform: translateX(100%);
@@ -1174,6 +1179,11 @@ function fmtShort(v) {
 let _donutData = []; // store for click detection
 
 function buildDonut() {
+  // Defer to next frame so canvas is fully laid out (critical for Safari)
+  requestAnimationFrame(() => _drawDonut());
+}
+
+function _drawDonut() {
   const catMap = {};
   TRANSACTIONS.forEach(t => {
     if (t.val > 0) catMap[t.cat] = (catMap[t.cat] || 0) + t.val;
@@ -1182,74 +1192,78 @@ function buildDonut() {
   const sorted = Object.entries(catMap).sort((a,b)=>b[1]-a[1]).slice(0,7);
 
   const canvas = document.getElementById('donut');
+  if (!canvas) return;
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
   const cx = W/2, cy = H/2;
-  const outerR = W * 0.42;
-  const innerR = W * 0.27;
-  const gap = 0.018; // gap between segments in radians
+  const ringW = W * 0.155;
+  const ringR = W * 0.345;
+  const gap = 0.022;
 
   ctx.clearRect(0, 0, W, H);
 
-  // background ring
+  // background ring — set ALL props before stroke
+  ctx.save();
   ctx.beginPath();
-  ctx.arc(cx, cy, (outerR+innerR)/2, 0, Math.PI*2);
-  ctx.lineWidth = outerR - innerR;
-  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx.arc(cx, cy, ringR, 0, Math.PI * 2);
+  ctx.lineWidth = ringW;
+  ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+  ctx.lineCap = 'butt';
   ctx.stroke();
+  ctx.restore();
 
-  // draw segments
-  let startAngle = -Math.PI/2;
+  // draw segments — each fully isolated with save/restore
+  let startAngle = -Math.PI / 2;
   _donutData = [];
 
   sorted.forEach(([cat, val]) => {
     const meta = CAT_META[cat] || {color:'#94a3b8'};
-    const sliceAngle = (val/total) * Math.PI * 2;
-    const endAngle = startAngle + sliceAngle - gap;
+    const color = meta.color;
+    const sliceAngle = (val / total) * Math.PI * 2;
+    const sa = startAngle + gap / 2;
+    const ea = startAngle + sliceAngle - gap / 2;
 
+    ctx.save();
     ctx.beginPath();
-    ctx.arc(cx, cy, (outerR+innerR)/2, startAngle + gap/2, endAngle);
-    ctx.lineWidth = outerR - innerR;
-    ctx.strokeStyle = meta.color;
+    ctx.arc(cx, cy, ringR, sa, ea);
+    ctx.lineWidth = ringW;
+    ctx.strokeStyle = color;
     ctx.lineCap = 'butt';
     ctx.stroke();
+    ctx.restore();
 
-    // store segment data for click detection
-    _donutData.push({
-      cat, startAngle: startAngle + gap/2, endAngle,
-      innerR, outerR, cx, cy
-    });
-
+    _donutData.push({ cat, sa, ea, innerR: ringR - ringW/2, outerR: ringR + ringW/2, cx, cy });
     startAngle += sliceAngle;
   });
 
-  // center text
-  ctx.fillStyle = '#f0f0f5';
-  ctx.font = 'bold 22px -apple-system, Nunito, sans-serif';
+  // center label
+  ctx.save();
   ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(fmtShort(total), cx, cy - 8);
-
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillStyle = '#f0f0f5';
+  ctx.font = 'bold 24px -apple-system, sans-serif';
+  ctx.fillText(fmtShort(total), cx, cy + 4);
   ctx.fillStyle = '#6b6b80';
-  ctx.font = '14px ui-monospace, DM Mono, monospace';
-  ctx.fillText('total', cx, cy + 14);
+  ctx.font = '14px ui-monospace, monospace';
+  ctx.fillText('total', cx, cy + 20);
+  ctx.restore();
 
-  // click handler
+  // tap/click handler
   canvas.onclick = (e) => {
     const rect = canvas.getBoundingClientRect();
     const scaleX = W / rect.width;
     const scaleY = H / rect.height;
     const x = (e.clientX - rect.left) * scaleX - cx;
     const y = (e.clientY - rect.top)  * scaleY - cy;
-    const dist = Math.sqrt(x*x + y*y);
+    const dist = Math.sqrt(x * x + y * y);
     let angle = Math.atan2(y, x);
-    if (angle < -Math.PI/2) angle += Math.PI*2;
+    if (angle < -Math.PI / 2) angle += Math.PI * 2;
 
     for (const seg of _donutData) {
       if (dist >= seg.innerR && dist <= seg.outerR) {
-        let sa = seg.startAngle < -Math.PI/2 ? seg.startAngle + Math.PI*2 : seg.startAngle;
-        let ea = seg.endAngle   < -Math.PI/2 ? seg.endAngle   + Math.PI*2 : seg.endAngle;
-        let a  = angle < sa - 0.1 ? angle + Math.PI*2 : angle;
+        let sa = seg.sa < -Math.PI/2 ? seg.sa + Math.PI*2 : seg.sa;
+        let ea = seg.ea < -Math.PI/2 ? seg.ea + Math.PI*2 : seg.ea;
+        let a  = angle < sa - 0.1  ? angle + Math.PI*2 : angle;
         if (a >= sa && a <= ea) { openDetail(seg.cat); return; }
       }
     }
@@ -1265,7 +1279,7 @@ function buildDonut() {
     item.className = 'legend-item';
     item.onclick = () => openDetail(cat);
     item.innerHTML = `
-      <div class="legend-dot" style="background-color:${meta.color};box-shadow:0 0 0 2px ${meta.color}40;min-width:10px;min-height:10px;"></div>
+      <svg width="10" height="10" style="flex-shrink:0"><circle cx="5" cy="5" r="5" fill="${meta.color}"/></svg>
       <span class="legend-name">${cat}</span>
       <span class="legend-pct">${pct}%</span>
       <span class="legend-val">${fmtShort(val)}</span>
@@ -1650,13 +1664,13 @@ function buildFixedDetail(body) {
   sumCard.className = 'card';
   sumCard.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:10px;background:var(--bg2)';
   sumCard.innerHTML = `
-    <div style="background:var(--bg3);border-radius:10px;padding:12px;border:1px solid var(--border)">
+    <div style="background:#1a1a24;border-radius:10px;padding:12px;border:1.5px solid #3a3a52">
       <div class="kpi-label">Total / Month</div>
-      <div style="font-size:20px;font-weight:800;color:var(--red)">R$ ${total.toLocaleString('pt-BR',{minimumFractionDigits:0})}</div>
+      <div id="fixed-summary-total" style="font-size:20px;font-weight:800;color:#f26b6b">R$ ${total.toLocaleString('pt-BR',{minimumFractionDigits:0})}</div>
     </div>
-    <div style="background:var(--bg3);border-radius:10px;padding:12px;border:1px solid var(--border)">
+    <div style="background:#1a1a24;border-radius:10px;padding:12px;border:1.5px solid #3a3a52">
       <div class="kpi-label">% of Salary</div>
-      <div style="font-size:20px;font-weight:800;color:var(--yellow)">${((total/salary)*100).toFixed(1)}%</div>
+      <div id="fixed-summary-pct" style="font-size:20px;font-weight:800;color:#f5c842">${((total/salary)*100).toFixed(1)}%</div>
     </div>
   `;
   body.appendChild(sumCard);
@@ -1747,13 +1761,10 @@ function refreshFixedDetail() {
   const list  = document.getElementById('fixed-list-card');
   if (chart) renderFixedBars(chart, total);
   if (list)  renderFixedList(list, total);
-  // update summary card
-  const sumCards = document.querySelectorAll('#kpi-detail-body .card');
-  if (sumCards[0]) {
-    const salary = 16195;
-    sumCards[0].querySelector('div:nth-child(1) > div:nth-child(2)').textContent = 'R$ ' + total.toLocaleString('pt-BR',{minimumFractionDigits:0});
-    sumCards[0].querySelector('div:nth-child(2) > div:nth-child(2)').textContent = ((total/salary)*100).toFixed(1) + '%';
-  }
+  const t1 = document.getElementById('fixed-summary-total');
+  const t2 = document.getElementById('fixed-summary-pct');
+  if (t1) t1.textContent = 'R$ ' + total.toLocaleString('pt-BR',{minimumFractionDigits:0});
+  if (t2) t2.textContent = ((total/16195)*100).toFixed(1) + '%';
   updateFixedKpi();
 }
 
