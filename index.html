@@ -1599,10 +1599,10 @@ buildCatChips();
 // FIXED COSTS DATA (mutable)
 // ═══════════════════════════════════════════════════════
 let FIXED_COSTS = [
-  {id:1, label:"Rent",    sub:"Monthly",               val:4500, icon:"&#x1F3E0;", color:"#7c6af7"},
-  {id:2, label:"Sports",  sub:"Coaching + supplements", val:1000, icon:"&#x1F3CB;", color:"#f5c842"},
-  {id:3, label:"Fuel",    sub:"Estimated monthly",      val:500,  icon:"&#x26FD;", color:"#fbbf24"},
-  {id:4, label:"Pet food",sub:"Dog food",               val:300,  icon:"&#x1F43E;", color:"#fb923c"},
+  {id:1, label:"Rent",     sub:"Monthly",               val:4500, color:"#7c6af7"},
+  {id:2, label:"Sports",   sub:"Coaching + supplements", val:1000, color:"#f5c842"},
+  {id:3, label:"Fuel",     sub:"Estimated monthly",      val:500,  color:"#fbbf24"},
+  {id:4, label:"Pet food", sub:"Dog food",               val:300,  color:"#fb923c"},
 ];
 let fixedEditId = null; // null = new
 
@@ -1707,26 +1707,47 @@ function buildFixedDetail(body) {
 
 function renderFixedBars(container, total) {
   container.innerHTML = '';
-  [...FIXED_COSTS].sort((a,b)=>b.val-a.val).forEach(c => {
+  [...FIXED_COSTS].sort((a,b) => b.val - a.val).forEach(c => {
     const pct = (c.val / total * 100).toFixed(1);
-    const barPct = (c.val / FIXED_COSTS[0] ? (c.val / Math.max(...FIXED_COSTS.map(x=>x.val)) * 100) : 100).toFixed(1);
+    const widthPct = (c.val / total * 100).toFixed(1);
+
     const row = document.createElement('div');
-    row.style.cssText = 'margin-bottom:14px';
-    row.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <div style="display:flex;align-items:center;gap:8px">
-          <span style="font-size:16px">${c.icon}</span>
-          <span style="font-size:13px;font-weight:700">${c.label}</span>
-        </div>
-        <div style="text-align:right">
-          <span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:var(--red)">R$ ${c.val.toLocaleString('pt-BR')}</span>
-          <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted2);margin-left:6px">${pct}%</span>
-        </div>
-      </div>
-      <div style="height:8px;background:var(--bg3);border-radius:99px;overflow:hidden">
-        <div style="height:100%;width:${(c.val/total*100).toFixed(1)}%;background:${c.color};border-radius:99px;transition:width .5s ease"></div>
-      </div>
-    `;
+    row.style.marginBottom = '14px';
+
+    const topRow = document.createElement('div');
+    topRow.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:6px';
+
+    const nameEl = document.createElement('span');
+    nameEl.style.cssText = 'font-size:13px;font-weight:700;color:#f0f0f5';
+    nameEl.textContent = c.label;
+
+    const valWrap = document.createElement('div');
+    valWrap.style.textAlign = 'right';
+
+    const valEl = document.createElement('span');
+    valEl.style.cssText = "font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:#f26b6b";
+    valEl.textContent = 'R$ ' + c.val.toLocaleString('pt-BR');
+
+    const pctEl = document.createElement('span');
+    pctEl.style.cssText = "font-family:'DM Mono',monospace;font-size:10px;color:#9090a8;margin-left:6px";
+    pctEl.textContent = pct + '%';
+
+    valWrap.appendChild(valEl);
+    valWrap.appendChild(pctEl);
+    topRow.appendChild(nameEl);
+    topRow.appendChild(valWrap);
+
+    const track = document.createElement('div');
+    track.style.cssText = 'height:8px;background:#1a1a24;border-radius:99px;overflow:hidden';
+
+    const fill = document.createElement('div');
+    fill.style.cssText = 'height:100%;border-radius:99px';
+    fill.style.width = widthPct + '%';
+    fill.style.background = c.color;
+
+    track.appendChild(fill);
+    row.appendChild(topRow);
+    row.appendChild(track);
     container.appendChild(row);
   });
 }
@@ -1735,25 +1756,56 @@ function renderFixedList(container, total) {
   container.innerHTML = '';
   FIXED_COSTS.forEach(c => {
     const pct = (c.val / total * 100).toFixed(0);
+
     const row = document.createElement('div');
     row.className = 'cf-row';
-    row.style.cursor = 'pointer';
-    row.innerHTML = `
-      <div style="display:flex;align-items:center;gap:10px;flex:1">
-        <div style="width:36px;height:36px;border-radius:10px;background:${c.color}22;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${c.icon}</div>
-        <div>
-          <div style="font-size:13px;font-weight:700">${c.label}</div>
-          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted2)">${c.sub}</div>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <div style="text-align:right">
-          <div style="font-family:'DM Mono',monospace;font-size:14px;font-weight:600;color:var(--red)">R$ ${c.val.toLocaleString('pt-BR')}</div>
-          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted2)">${pct}%</div>
-        </div>
-        <div onclick="event.stopPropagation();openEditFixed(${c.id})" style="width:30px;height:30px;border-radius:8px;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--muted2)">✏️</div>
-      </div>
-    `;
+
+    // left: color dot + label + sub
+    const left = document.createElement('div');
+    left.style.cssText = 'display:flex;align-items:center;gap:12px;flex:1';
+
+    const dot = document.createElement('div');
+    dot.style.cssText = 'width:12px;height:12px;border-radius:50%;flex-shrink:0';
+    dot.style.backgroundColor = c.color;
+
+    const info = document.createElement('div');
+    const lbl = document.createElement('div');
+    lbl.style.cssText = 'font-size:13px;font-weight:700;color:#f0f0f5';
+    lbl.textContent = c.label;
+    const sub = document.createElement('div');
+    sub.style.cssText = "font-family:'DM Mono',monospace;font-size:10px;color:#9090a8";
+    sub.textContent = c.sub;
+    info.appendChild(lbl);
+    info.appendChild(sub);
+
+    left.appendChild(dot);
+    left.appendChild(info);
+
+    // right: value + edit btn
+    const right = document.createElement('div');
+    right.style.cssText = 'display:flex;align-items:center;gap:10px';
+
+    const valWrap = document.createElement('div');
+    valWrap.style.textAlign = 'right';
+    const valEl = document.createElement('div');
+    valEl.style.cssText = "font-family:'DM Mono',monospace;font-size:14px;font-weight:600;color:#f26b6b";
+    valEl.textContent = 'R$ ' + c.val.toLocaleString('pt-BR');
+    const pctEl = document.createElement('div');
+    pctEl.style.cssText = "font-family:'DM Mono',monospace;font-size:10px;color:#9090a8";
+    pctEl.textContent = pct + '%';
+    valWrap.appendChild(valEl);
+    valWrap.appendChild(pctEl);
+
+    const editBtn = document.createElement('div');
+    editBtn.style.cssText = 'width:30px;height:30px;border-radius:8px;background:#1a1a24;border:1px solid #3a3a52;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#9090a8;font-size:12px;font-weight:700';
+    editBtn.textContent = 'Edit';
+    editBtn.onclick = (e) => { e.stopPropagation(); openEditFixed(c.id); };
+
+    right.appendChild(valWrap);
+    right.appendChild(editBtn);
+
+    row.appendChild(left);
+    row.appendChild(right);
     container.appendChild(row);
   });
 }
