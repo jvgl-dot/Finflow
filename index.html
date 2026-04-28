@@ -985,14 +985,30 @@ transition:transform .15s,box-shadow .15s;line-height:1;
 <script>
 
 // ═══════════════════════════════════════════════════════
+// FIXED COSTS DATA — declared first so available everywhere
+// ═══════════════════════════════════════════════════════
+var FIXED_COSTS = [
+  {id:1, label:"Rent",     sub:"Monthly",               val:4500, color:"#7c6af7"},
+  {id:2, label:"Sports",   sub:"Coaching + supplements", val:1000, color:"#f5c842"},
+  {id:3, label:"Fuel",     sub:"Estimated monthly",      val:500,  color:"#fbbf24"},
+  {id:4, label:"Pet food", sub:"Dog food",               val:300,  color:"#fb923c"},
+];
+
+// ═══════════════════════════════════════════════════════
 // SAFARI DETAIL PAGE CONSTRAINT
 // ═══════════════════════════════════════════════════════
 function constrainDetailPage(id) {
   const app = document.getElementById('app');
   const rect = app.getBoundingClientRect();
   const el = document.getElementById(id);
-  el.style.left = rect.left + 'px';
-  el.style.right = (window.innerWidth - rect.right) + 'px';
+  // On narrow screens (iPhone) use full width; on wide (iPad) constrain to app
+  if (rect.width >= window.innerWidth - 10) {
+    el.style.left = '0';
+    el.style.right = '0';
+  } else {
+    el.style.left = rect.left + 'px';
+    el.style.right = (window.innerWidth - rect.right) + 'px';
+  }
   el.style.top = '0';
   el.style.bottom = '0';
 }
@@ -1595,15 +1611,6 @@ buildCashFlow();
 buildForecast();
 buildCatChips();
 
-// ═══════════════════════════════════════════════════════
-// FIXED COSTS DATA (mutable)
-// ═══════════════════════════════════════════════════════
-let FIXED_COSTS = [
-  {id:1, label:"Rent",     sub:"Monthly",               val:4500, color:"#7c6af7"},
-  {id:2, label:"Sports",   sub:"Coaching + supplements", val:1000, color:"#f5c842"},
-  {id:3, label:"Fuel",     sub:"Estimated monthly",      val:500,  color:"#fbbf24"},
-  {id:4, label:"Pet food", sub:"Dog food",               val:300,  color:"#fb923c"},
-];
 let fixedEditId = null; // null = new
 
 function fixedTotal() { return FIXED_COSTS.reduce((a,c)=>a+c.val,0); }
@@ -1649,7 +1656,13 @@ function openKpiDetail(type) {
     page.classList.add('open');
   } catch(e) {
     console.error('openKpiDetail error:', e);
-    alert('Error opening detail: ' + e.message);
+    // Show error on screen since Safari may block alerts in PWA mode
+    const errDiv = document.getElementById('kpi-detail-body');
+    if (errDiv) {
+      errDiv.innerHTML = '<div style="color:#f26b6b;padding:20px;font-family:monospace;font-size:12px">Error: ' + e.message + '<br><br>' + e.stack + '</div>';
+      document.getElementById('kpi-detail-page').classList.add('open');
+      constrainDetailPage('kpi-detail-page');
+    }
   }
 }
 
@@ -1870,7 +1883,7 @@ function saveFixed() {
   if (fixedEditId === null) {
     // add new
     const newId = Math.max(0, ...FIXED_COSTS.map(c=>c.id)) + 1;
-    FIXED_COSTS.push({id:newId, label, sub:note||'Monthly', val:amount, icon:'&#x1F4CC;', color:'var(--c-other)'});
+    FIXED_COSTS.push({id:newId, label, sub:note||'Monthly', val:amount, color:'#94a3b8'});
   } else {
     // edit existing
     const cost = FIXED_COSTS.find(c=>c.id===fixedEditId);
