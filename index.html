@@ -1202,10 +1202,12 @@ const FORECAST = [
 ];
 
 const FIXED = [
-  {label:"Rent",         sub:"Monthly",                 val:4500},
-  {label:"Pet food",     sub:"Dog food",                val:300},
-  {label:"Fuel",         sub:"Estimated monthly",       val:500},
-  {label:"Sports",       sub:"Coaching + supplements",  val:1000},
+  {label:"House",   sub:"Rent",                 val:4500},
+  {label:"House",   sub:"Rent",                 val:540},
+  {label:"Sports",  sub:"BR + CGFit + Wellhub", val:1495},
+  {label:"Fuel",    sub:"Estimated monthly",    val:500},
+  {label:"Pet",     sub:"Food",                 val:315},
+  {label:"Pet",     sub:"Bath",                 val:202},
 ];
 
 // ═══════════════════════════════════════════════════════
@@ -2141,7 +2143,7 @@ function buildInvestmentsPage() {
     const typeHeader = document.createElement('div');
     typeHeader.style.cssText = 'display:flex;align-items:center;gap:8px;padding:12px 0 6px;border-bottom:1px solid #3a3a52';
     const dot = document.createElement('div');
-    dot.style.cssText = `width:8px;height:8px;border-radius:50%;background:${TYPE_COLORS[type]||'#94a3b8';flex-shrink:0}`;
+    dot.style.cssText = 'width:8px;height:8px;border-radius:50%;flex-shrink:0';
     dot.style.background = TYPE_COLORS[type] || '#94a3b8';
     dot.style.flexShrink = '0';
     const typeLabel = document.createElement('span');
