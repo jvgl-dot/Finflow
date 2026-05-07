@@ -709,12 +709,28 @@ background: #7c6af710;
 
 <!-- ── INSTALLMENTS ── -->
 <div class="page" id="page-installments">
-  <div class="section-title">Active Installment Plans</div>
-  <div class="card" id="inst-summary-cards" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:var(--bg2)"></div>
-  <div class="section-title">All Plans</div>
-  <div class="card" style="padding:0 16px">
-    <div id="inst-list"></div>
+
+  <!-- KPI strip -->
+  <div id="inst-kpi-strip" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;padding-top:4px"></div>
+
+  <!-- Horizontal scrollable month chart -->
+  <div class="section-title">Monthly Commitment</div>
+  <div style="position:relative;margin-bottom:4px">
+    <div id="inst-chart-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:8px">
+      <canvas id="inst-chart" height="160" style="display:block"></canvas>
+    </div>
+    <!-- Fade edges -->
+    <div style="position:absolute;top:0;right:0;width:32px;height:100%;background:linear-gradient(to left,#0a0a0f,transparent);pointer-events:none"></div>
   </div>
+  <div id="inst-chart-legend" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px"></div>
+
+  <!-- Selected month detail (shown when bar tapped) -->
+  <div id="inst-month-detail" style="display:none;margin-bottom:12px"></div>
+
+  <!-- All plans list -->
+  <div class="section-title" style="margin-top:4px">All Plans</div>
+  <div id="inst-list" style="display:flex;flex-direction:column;gap:8px"></div>
+
 </div>
 
 <!-- ── CASH FLOW ── -->
@@ -1132,27 +1148,23 @@ const TRANSACTIONS = [
 ];
 
 const INSTALLMENTS = [
-  // Updated to June 2026 — all current numbers advanced by 1
-  {id: 1,  name: "TV",              category: "Home",      description: "Television",           current: 3, total: 8,  monthly: 1126.88},
-  {id: 2,  name: "Espaço Til",      category: "Home",      description: "Armchair / table",     current: 2, total: 4,  monthly: 586.25},
-  {id: 3,  name: "Verte tapetes",   category: "Home",      description: "Rug",                  current: 2, total: 4,  monthly: 374.75},
-  {id: 4,  name: "Espaço Til",      category: "Home",      description: "Cushions / blanket",   current: 3, total: 3,  monthly: 336.68},
-  {id: 5,  name: "Lustres yamamura",category: "Home",      description: "Light fixtures",       current: 2, total: 2,  monthly: 303.50},
-  {id: 6,  name: "Paul shop",       category: "Other",     description: "Paul shop purchase",   current: 2, total: 2,  monthly: 229.08},
-  {id: 7,  name: "Bazar das tint",  category: "Home",      description: "Wall paint",           current: 3, total: 3,  monthly: 195.90},
-  {id: 8,  name: "Bf spp 92",       category: "Other",     description: "BF SPP purchase",      current: 2, total: 5,  monthly: 159.98},
-  {id: 9,  name: "Fairfax seg",     category: "Sports",    description: "Bike insurance",       current: 7, total: 11, monthly: 130.01},
-  {id: 10, name: "Payu Adidas",     category: "Sports",    description: "Adidas sneakers",      current: 9, total: 10, monthly: 112.08},
-  {id: 11, name: "Mlp Magalu",      category: "Sports",    description: "Swimming goggles",     current: 2, total: 5,  monthly: 111.54},
-  {id: 12, name: "Nike",            category: "Fashion",   description: "Sneakers",             current: 4, total: 5,  monthly: 106.43},
-  {id: 13, name: "Electrolux",      category: "Home",      description: "Water purifier",       current: 3, total: 10, monthly: 66.49},
-  {id: 14, name: "Disney Plus",     category: "Streaming", description: "Disney+ subscription", current: 5, total: 12, monthly: 46.88},
-  {id: 16, name: "Pet love",        category: "Pet",       description: "Petlove Plus club",    current: 3, total: 12, monthly: 9.99},
-  // Ending this month (last installment in June):
-  {id: 4,  name: "Espaço Til alm.", category: "Home",      description: "Cushions — LAST ✓",   current: 3, total: 3,  monthly: 336.68},
-  {id: 5,  name: "Lustres yamamura",category: "Home",      description: "Light fixtures — LAST ✓",current:2,total:2, monthly: 303.50},
-  {id: 6,  name: "Paul shop",       category: "Other",     description: "Paul shop — LAST ✓",  current: 2, total: 2,  monthly: 229.08},
-  {id: 7,  name: "Bazar das tint",  category: "Home",      description: "Wall paint — LAST ✓",  current: 3, total: 3,  monthly: 195.90},
+  // June 2026 — active installments only (current < total means still ongoing)
+  {id:1,  name:"TV",              category:"Home",      description:"Television",           current:3, total:8,  monthly:1126.88},
+  {id:2,  name:"Espaço Til",      category:"Home",      description:"Armchair / table",     current:2, total:4,  monthly:586.25},
+  {id:3,  name:"Verte Tapetes",   category:"Home",      description:"Rug",                  current:2, total:4,  monthly:374.75},
+  {id:8,  name:"Bf Spp 92",       category:"Other",     description:"BF SPP purchase",      current:2, total:5,  monthly:159.98},
+  {id:9,  name:"Seguro Bicicleta",category:"Sports",    description:"Bike insurance",       current:7, total:11, monthly:130.01},
+  {id:10, name:"Adidas (tenis)",  category:"Sports",    description:"Adidas sneakers",      current:9, total:10, monthly:112.08},
+  {id:11, name:"Mlp Magalu",      category:"Home",      description:"Magalu purchase",      current:2, total:5,  monthly:111.54},
+  {id:12, name:"Nike",            category:"Apparel",   description:"Sneakers",             current:4, total:5,  monthly:106.43},
+  {id:13, name:"Electrolux",      category:"Home",      description:"Water purifier",       current:3, total:10, monthly:66.49},
+  {id:14, name:"Disney Plus",     category:"Streaming", description:"Disney+",              current:5, total:12, monthly:46.88},
+  {id:15, name:"Pet Love Clube",  category:"Pet",       description:"Petlove Plus",         current:3, total:12, monthly:9.99},
+  // Last installment this month (current+1 = total, won't appear July+)
+  {id:4,  name:"Espaço Til alm.", category:"Home",      description:"Cushions/blanket",     current:2, total:3,  monthly:336.68},
+  {id:5,  name:"Lustres Yamamura",category:"Home",      description:"Light fixtures",       current:1, total:2,  monthly:303.50},
+  {id:6,  name:"Paul Shop",       category:"Other",     description:"Paul shop purchase",   current:1, total:2,  monthly:229.08},
+  {id:7,  name:"Bazar das Tint",  category:"Home",      description:"Wall paint",           current:2, total:3,  monthly:195.90},
 ];
 
 const FORECAST = [
@@ -1203,8 +1215,8 @@ function fmtShort(v) {
 let _donutData = []; // store for click detection
 
 function buildDonut() {
-  // Defer to next frame so canvas is fully laid out (critical for Safari)
-  requestAnimationFrame(() => _drawDonut());
+  // Double rAF ensures canvas is laid out and painted before drawing
+  requestAnimationFrame(() => requestAnimationFrame(() => _drawDonut()));
 }
 
 function _drawDonut() {
@@ -1217,6 +1229,10 @@ function _drawDonut() {
 
   const canvas = document.getElementById('donut');
   if (!canvas) return;
+  // Ensure canvas has size (Safari PWA can render at 0x0)
+  if (canvas.width < 10 || canvas.height < 10) {
+    canvas.width = 260; canvas.height = 260;
+  }
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
   const cx = W/2, cy = H/2;
@@ -1367,52 +1383,302 @@ function buildStatement(txList) {
 // INSTALLMENTS
 // ═══════════════════════════════════════════════════════
 function buildInstallments() {
-  const summary = document.getElementById('inst-summary-cards');
-  const totalMonthly = INSTALLMENTS.reduce((a,i)=>a+(i.val||i.monthly),0);
-  const totalRemaining = INSTALLMENTS.reduce((a,i)=>a+((i.pt-i.p)*i.monthly),0);
-  const active = INSTALLMENTS.filter(i=>i.p<i.pt).length;
-  summary.innerHTML = `
-    <div style="background:var(--bg3);border-radius:10px;padding:12px;border:1px solid var(--border)">
-      <div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:4px">ACTIVE PLANS</div>
-      <div style="font-size:22px;font-weight:800;color:var(--accent2)">${active}</div>
-    </div>
-    <div style="background:var(--bg3);border-radius:10px;padding:12px;border:1px solid var(--border)">
-      <div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:4px">THIS MONTH</div>
-      <div style="font-size:18px;font-weight:800;color:var(--red)">${fmtShort(totalMonthly)}</div>
-    </div>
-    <div style="background:var(--bg3);border-radius:10px;padding:12px;border:1px solid var(--border);grid-column:1/-1">
-      <div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:4px">TOTAL REMAINING COMMITMENT</div>
-      <div style="font-size:22px;font-weight:800;color:var(--yellow)">${fmt(totalRemaining)}</div>
-    </div>
-  `;
+  const MONTHS = ['Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const MONTH_FULL = ['June 2026','July 2026','August 2026','September 2026','October 2026','November 2026','December 2026'];
 
+  // For each installment, figure out which months it still appears in
+  // current_p = this month (June = 0), so remaining = total - current
+  // It appears in months 0...(remaining-1) of our 7-month window
+  function getInstMonths(inst) {
+    const cur  = inst.current !== undefined ? inst.current : inst.p;
+    const tot  = inst.total   !== undefined ? inst.total   : inst.pt;
+    const rem  = tot - cur;
+    // month index 0 = June (current), appears in 0..rem-1
+    return Math.min(rem, 7);
+  }
+
+  // Build month totals — stacked by category
+  const catKeys = [...new Set(INSTALLMENTS.map(i => i.category || i.cat || 'Other'))];
+  const catColors2 = {};
+  catKeys.forEach(k => {
+    catColors2[k] = (CAT_META[k] || {color:'#94a3b8'}).color;
+  });
+
+  // monthData[m] = { cat: total }
+  const monthData = Array.from({length:7}, () => ({}));
+  INSTALLMENTS.forEach(inst => {
+    const cat = inst.category || inst.cat || 'Other';
+    const color = catColors2[cat];
+    const nMonths = getInstMonths(inst);
+    for (let m = 0; m < nMonths; m++) {
+      monthData[m][cat] = (monthData[m][cat] || 0) + inst.monthly;
+    }
+  });
+
+  const monthTotals = monthData.map(d => Object.values(d).reduce((a,b)=>a+b,0));
+  const maxTotal = Math.max(...monthTotals, 1);
+
+  // ── KPI strip ─────────────────────────────────────────
+  const strip = document.getElementById('inst-kpi-strip');
+  strip.innerHTML = '';
+  const active = INSTALLMENTS.filter(i => {
+    const cur = i.current !== undefined ? i.current : i.p;
+    const tot = i.total   !== undefined ? i.total   : i.pt;
+    return cur < tot;
+  }).length;
+  const totalMonthly = INSTALLMENTS.reduce((a,i)=>a+i.monthly,0);
+  const totalRemaining = INSTALLMENTS.reduce((a,i)=>{
+    const cur = i.current !== undefined ? i.current : i.p;
+    const tot = i.total   !== undefined ? i.total   : i.pt;
+    return a + Math.max(0, tot-cur) * i.monthly;
+  },0);
+
+  [[active,'Plans','#a594ff'],[fmtShort(totalMonthly),'This month','#f26b6b'],[fmtShort(totalRemaining),'Total left','#f5c842']].forEach(([val,lbl,col])=>{
+    const d = document.createElement('div');
+    d.style.cssText = 'background:#111118;border:1.5px solid #3a3a52;border-radius:14px;padding:12px 10px;text-align:center';
+    d.innerHTML = `<div style="font-size:9px;color:#6b6b80;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">${lbl}</div><div style="font-size:18px;font-weight:800;color:${col}">${val}</div>`;
+    strip.appendChild(d);
+  });
+
+  // ── Canvas bar chart ──────────────────────────────────
+  const MONTHS_COUNT = 7;
+  const BAR_W = 52;
+  const BAR_GAP = 12;
+  const CHART_H = 160;
+  const PAD_L = 8;
+  const PAD_B = 32;
+  const PAD_T = 16;
+  const totalW = PAD_L + MONTHS_COUNT * (BAR_W + BAR_GAP);
+
+  const canvas = document.getElementById('inst-chart');
+  canvas.width = totalW;
+  canvas.style.width = totalW + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, totalW, CHART_H);
+
+  let selectedMonth = null;
+
+  function drawChart(highlight) {
+    ctx.clearRect(0, 0, totalW, CHART_H);
+    const plotH = CHART_H - PAD_B - PAD_T;
+
+    MONTHS.forEach((month, mi) => {
+      const x = PAD_L + mi * (BAR_W + BAR_GAP);
+      const total = monthTotals[mi];
+      const isHigh = highlight === mi;
+      const alpha = highlight !== null && !isHigh ? '60' : 'ff';
+
+      // stacked bars per category
+      let yOffset = CHART_H - PAD_B;
+      catKeys.forEach(cat => {
+        const v = monthData[mi][cat] || 0;
+        if (!v) return;
+        const bh = Math.max(2, (v / maxTotal) * plotH);
+        yOffset -= bh;
+        ctx.save();
+        ctx.beginPath();
+        ctx.roundRect ? ctx.roundRect(x, yOffset, BAR_W, bh, [4,4,0,0]) : (ctx.rect(x, yOffset, BAR_W, bh));
+        ctx.fillStyle = catColors2[cat] + (highlight !== null && !isHigh ? '55' : 'ee');
+        ctx.fill();
+        ctx.restore();
+      });
+
+      // Month label
+      ctx.save();
+      ctx.fillStyle = isHigh ? '#f0f0f5' : '#6b6b80';
+      ctx.font = (isHigh ? 'bold ' : '') + '11px -apple-system,sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(month, x + BAR_W/2, CHART_H - 14);
+      ctx.restore();
+
+      // Total label above bar
+      if (total > 0) {
+        ctx.save();
+        ctx.fillStyle = isHigh ? '#f0f0f5' : '#6b6b8088';
+        ctx.font = '9px ui-monospace,monospace';
+        ctx.textAlign = 'center';
+        const barTopY = CHART_H - PAD_B - (total/maxTotal)*plotH;
+        ctx.fillText(fmtShort(total), x + BAR_W/2, barTopY - 4);
+        ctx.restore();
+      }
+
+      // Highlight ring
+      if (isHigh) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.roundRect ? ctx.roundRect(x-2, PAD_T-4, BAR_W+4, CHART_H-PAD_B-PAD_T+8, 8) : (ctx.rect(x-2, PAD_T-4, BAR_W+4, CHART_H-PAD_B-PAD_T+8));
+        ctx.strokeStyle = '#a594ff44';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        ctx.restore();
+      }
+    });
+  }
+
+  drawChart(null);
+
+  // Tap handler
+  canvas.onclick = (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const tapX = (e.clientX - rect.left) * scaleX - PAD_L;
+    const mi = Math.floor(tapX / (BAR_W + BAR_GAP));
+    if (mi < 0 || mi >= MONTHS_COUNT) return;
+    selectedMonth = selectedMonth === mi ? null : mi;
+    drawChart(selectedMonth);
+    showMonthDetail(selectedMonth);
+  };
+
+  // ── Legend ────────────────────────────────────────────
+  const legendEl = document.getElementById('inst-chart-legend');
+  legendEl.innerHTML = '';
+  catKeys.forEach(cat => {
+    const hasAny = monthData.some(d => d[cat]);
+    if (!hasAny) return;
+    const chip = document.createElement('div');
+    chip.style.cssText = 'display:flex;align-items:center;gap:5px;padding:3px 8px;border-radius:99px;background:#111118;border:1px solid #3a3a52';
+    chip.innerHTML = `<svg width="8" height="8"><circle cx="4" cy="4" r="4" fill="${catColors2[cat]}"/></svg><span style="font-size:10px;color:#9090a8;font-family:'DM Mono',monospace">${cat}</span>`;
+    legendEl.appendChild(chip);
+  });
+
+  // ── Month detail panel ────────────────────────────────
+  function showMonthDetail(mi) {
+    const panel = document.getElementById('inst-month-detail');
+    if (mi === null) { panel.style.display = 'none'; return; }
+    panel.style.display = 'block';
+
+    const items = INSTALLMENTS.filter(inst => {
+      const cur = inst.current !== undefined ? inst.current : inst.p;
+      const tot = inst.total   !== undefined ? inst.total   : inst.pt;
+      return mi < (tot - cur);
+    }).sort((a,b) => b.monthly - a.monthly);
+
+    panel.innerHTML = '';
+    const header = document.createElement('div');
+    header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:8px';
+    header.innerHTML = `
+      <div style="font-size:13px;font-weight:700;color:#f0f0f5">${MONTH_FULL[mi]}</div>
+      <div style="font-family:'DM Mono',monospace;font-size:12px;color:#f26b6b;font-weight:700">${fmt(monthTotals[mi])}</div>`;
+    panel.appendChild(header);
+
+    const card = document.createElement('div');
+    card.style.cssText = 'background:#111118;border:1.5px solid #3a3a52;border-radius:14px;overflow:hidden';
+    items.forEach((inst, idx) => {
+      const cat = inst.category || inst.cat || 'Other';
+      const color = (CAT_META[cat] || {color:'#94a3b8'}).color;
+      const cur = inst.current !== undefined ? inst.current : inst.p;
+      const tot = inst.total   !== undefined ? inst.total   : inst.pt;
+      const parc = cur + mi + 1; // which installment number in that month
+
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 14px;' + (idx>0?'border-top:1px solid #1a1a24':'');
+
+      const dot = document.createElement('div');
+      dot.style.cssText = `width:8px;height:8px;border-radius:50%;flex-shrink:0;background:${color}`;
+      row.appendChild(dot);
+
+      const info = document.createElement('div');
+      info.style.flex = '1';
+      const name = document.createElement('div');
+      name.style.cssText = 'font-size:12px;font-weight:700;color:#f0f0f5';
+      name.textContent = inst.name;
+      const sub = document.createElement('div');
+      sub.style.cssText = "font-family:'DM Mono',monospace;font-size:10px;color:#6b6b80";
+      sub.textContent = `${parc}/${tot}`;
+      info.appendChild(name); info.appendChild(sub);
+      row.appendChild(info);
+
+      const val = document.createElement('div');
+      val.style.cssText = "font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:#f26b6b";
+      val.textContent = fmt(inst.monthly);
+      row.appendChild(val);
+
+      card.appendChild(row);
+    });
+    panel.appendChild(card);
+  }
+
+  // ── All plans list ────────────────────────────────────
   const list = document.getElementById('inst-list');
   list.innerHTML = '';
-  const sorted = [...INSTALLMENTS].sort((a,b)=>((b.pt-b.p)*b.monthly)-((a.pt-a.p)*a.monthly));
+
+  const sorted = [...INSTALLMENTS].sort((a,b)=>{
+    const remA = Math.max(0, (a.total||a.pt) - (a.current||a.p));
+    const remB = Math.max(0, (b.total||b.pt) - (b.current||b.p));
+    return (remB * b.monthly) - (remA * a.monthly);
+  });
+
   sorted.forEach(inst => {
-    const meta = CAT_META[inst.cat] || {color:'var(--c-other)',emoji:'📦'};
-    const rem = inst.pt - inst.p;
-    const pct = (inst.p / inst.pt) * 100;
+    const cat   = inst.category || inst.cat || 'Other';
+    const color = (CAT_META[cat] || {color:'#94a3b8'}).color;
+    const cur   = inst.current !== undefined ? inst.current : inst.p;
+    const tot   = inst.total   !== undefined ? inst.total   : inst.pt;
+    const rem   = Math.max(0, tot - cur);
+    const pct   = tot > 0 ? (cur / tot) * 100 : 0;
     const isLast = rem === 0;
-    const isSoon = rem <= 2 && rem > 0;
-    const el = document.createElement('div');
-    el.className = 'inst-item';
-    el.innerHTML = `
-      <div class="inst-dot" style="background:${meta.color}22;color:${meta.color}">${meta.emoji}</div>
-      <div class="inst-info">
-        <div class="inst-name">${inst.name}
-          ${isLast ? '<span class="badge badge-last">done ✓</span>' : ''}
-          ${isSoon && !isLast ? '<span class="badge badge-soon">ending soon</span>' : ''}
-        </div>
-        <div class="inst-desc">${inst.desc} · ${inst.p}/${inst.pt} · ${rem} left</div>
-        <div class="inst-progress"><div class="inst-progress-fill" style="width:${pct}%;background:${meta.color}"></div></div>
-      </div>
-      <div class="inst-right">
-        <div class="inst-monthly">${fmt(inst.monthly)}</div>
-        <div class="inst-remaining">${rem > 0 ? fmt(rem*inst.monthly)+' left' : 'paid off'}</div>
-      </div>
-    `;
-    list.appendChild(el);
+    const isSoon = rem === 1;
+
+    const card = document.createElement('div');
+    card.style.cssText = `background:#111118;border:1.5px solid ${isLast?'#3ecf8e44':isSoon?'#f5c84244':'#3a3a52'};border-radius:14px;padding:14px;`;
+
+    // top row
+    const top = document.createElement('div');
+    top.style.cssText = 'display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px';
+
+    const left = document.createElement('div');
+    const nameEl = document.createElement('div');
+    nameEl.style.cssText = 'font-size:13px;font-weight:700;color:#f0f0f5;margin-bottom:2px';
+    nameEl.textContent = inst.name;
+    const descEl = document.createElement('div');
+    descEl.style.cssText = "font-family:'DM Mono',monospace;font-size:10px;color:#6b6b80";
+    descEl.textContent = (inst.description || inst.desc || cat) + ' · ' + cat;
+    left.appendChild(nameEl); left.appendChild(descEl);
+
+    const right = document.createElement('div');
+    right.style.textAlign = 'right';
+    const monthly = document.createElement('div');
+    monthly.style.cssText = "font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:#f0f0f5";
+    monthly.textContent = fmt(inst.monthly) + '/mo';
+    const remaining = document.createElement('div');
+    remaining.style.cssText = `font-family:'DM Mono',monospace;font-size:10px;color:${isLast?'#3ecf8e':isSoon?'#f5c842':'#6b6b80'}`;
+    remaining.textContent = isLast ? 'Done ✓' : rem + ' left · ' + fmt(rem * inst.monthly);
+    right.appendChild(monthly); right.appendChild(remaining);
+
+    top.appendChild(left); top.appendChild(right);
+    card.appendChild(top);
+
+    // progress bar
+    const track = document.createElement('div');
+    track.style.cssText = 'height:6px;background:#1a1a24;border-radius:99px;overflow:hidden;margin-bottom:6px';
+    const fill2 = document.createElement('div');
+    fill2.style.cssText = `height:100%;border-radius:99px;background:${color};width:${pct}%;transition:width .6s ease`;
+    track.appendChild(fill2); card.appendChild(track);
+
+    // installment counter dots
+    const dots = document.createElement('div');
+    dots.style.cssText = 'display:flex;align-items:center;justify-content:space-between';
+    const dotsLeft = document.createElement('div');
+    dotsLeft.style.cssText = 'display:flex;gap:3px;flex-wrap:wrap';
+    const maxDots = Math.min(tot, 12);
+    for (let i = 0; i < maxDots; i++) {
+      const d = document.createElement('div');
+      const isPaid = i < cur;
+      d.style.cssText = `width:${tot>8?'6px':'8px'};height:${tot>8?'6px':'8px'};border-radius:50%;background:${isPaid?color:'#1a1a24'};border:1px solid ${isPaid?color:'#3a3a52'}`;
+      dotsLeft.appendChild(d);
+    }
+    if (tot > 12) {
+      const more = document.createElement('div');
+      more.style.cssText = "font-family:'DM Mono',monospace;font-size:9px;color:#6b6b80;margin-left:4px;align-self:center";
+      more.textContent = `+${tot-12}`;
+      dotsLeft.appendChild(more);
+    }
+    const counter = document.createElement('div');
+    counter.style.cssText = "font-family:'DM Mono',monospace;font-size:10px;color:#6b6b80";
+    counter.textContent = `${cur}/${tot}`;
+    dots.appendChild(dotsLeft); dots.appendChild(counter);
+    card.appendChild(dots);
+
+    list.appendChild(card);
   });
 }
 
