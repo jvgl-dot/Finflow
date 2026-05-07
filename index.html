@@ -659,25 +659,15 @@ background: #7c6af710;
 <!-- ── DASHBOARD ── -->
 <div class="page active" id="page-dashboard">
   <div class="kpi-row">
-    <div class="kpi kpi-clickable" onclick="openKpiDetail('card')">
+    <div class="kpi kpi-clickable kpi-wide" onclick="openKpiDetail('card')">
       <div class="kpi-label">Credit Card ›</div>
       <div class="kpi-value kpi-negative" id="kpi-card">R$ 4.428</div>
-      <div class="kpi-sub">27% of salary</div>
+      <div class="kpi-sub">27% of salary · due 7th</div>
     </div>
-    <div class="kpi kpi-clickable" onclick="openKpiDetail('fixed')">
+    <div class="kpi kpi-clickable kpi-wide" onclick="openKpiDetail('fixed')">
       <div class="kpi-label">Fixed Costs ›</div>
       <div class="kpi-value kpi-negative" id="kpi-fixed">R$ 7,137</div>
       <div class="kpi-sub">Rent · fuel · pet · sports</div>
-    </div>
-    <div class="kpi kpi-clickable" onclick="openKpiDetail('invest')">
-      <div class="kpi-label">Investment ›</div>
-      <div class="kpi-value kpi-accent" id="kpi-invest">R$ 3,000</div>
-      <div class="kpi-sub">18.5% of salary</div>
-    </div>
-    <div class="kpi kpi-clickable" onclick="openKpiDetail('balance')">
-      <div class="kpi-label">Available to Invest ›</div>
-      <div class="kpi-value kpi-positive" id="kpi-balance">R$ 1,215</div>
-      <div class="kpi-sub">Income − fixed − card</div>
     </div>
   </div>
 
@@ -688,9 +678,6 @@ background: #7c6af710;
       <div class="legend" id="legend"></div>
     </div>
   </div>
-
-  <div class="section-title">Upcoming Card Forecast</div>
-  <div class="timeline" id="forecast-timeline"></div>
 </div>
 
 <!-- ── STATEMENT ── -->
@@ -770,8 +757,11 @@ background: #7c6af710;
     </div>
   </div>
 
-  <div class="section-title">Monthly Projection Jun–Dec</div>
+  <div class="section-title">Monthly Projection Jul–Dec</div>
   <div id="cf-projection"></div>
+
+  <div class="section-title" style="margin-top:8px">Upcoming Card Forecast</div>
+  <div class="timeline" id="forecast-timeline"></div>
 </div>
 
 <!-- ── INVESTMENTS ── -->
@@ -1605,7 +1595,10 @@ function buildInstallments() {
   const sorted = [...INSTALLMENTS].sort((a,b)=>{
     const remA = Math.max(0, (a.total||a.pt) - (a.current||a.p));
     const remB = Math.max(0, (b.total||b.pt) - (b.current||b.p));
-    return (remB * b.monthly) - (remA * a.monthly);
+    // Sort by remaining installments ascending (closest to end first)
+    if (remA !== remB) return remA - remB;
+    // Tie-break by monthly value descending
+    return b.monthly - a.monthly;
   });
 
   sorted.forEach(inst => {
