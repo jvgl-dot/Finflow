@@ -1728,26 +1728,36 @@ function buildFixedDetail(body) {
 
 function renderFixedBars(container, total) {
   container.innerHTML = '';
-  [...FIXED_COSTS].sort((a,b) => b.val - a.val).forEach(c => {
-    const pct = (c.val / total * 100).toFixed(1);
-    const widthPct = (c.val / total * 100).toFixed(1);
+
+  // Group by label, summing values
+  const grouped = {};
+  FIXED_COSTS.forEach(c => {
+    if (!grouped[c.label]) grouped[c.label] = {val:0, color:c.color};
+    grouped[c.label].val += c.val;
+  });
+
+  // Sort by value descending
+  const sorted = Object.entries(grouped).sort((a,b) => b[1].val - a[1].val);
+
+  sorted.forEach(([label, data]) => {
+    const pct = (data.val / total * 100).toFixed(1);
 
     const row = document.createElement('div');
-    row.style.marginBottom = '14px';
+    row.style.marginBottom = '16px';
 
     const topRow = document.createElement('div');
     topRow.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:6px';
 
     const nameEl = document.createElement('span');
     nameEl.style.cssText = 'font-size:13px;font-weight:700;color:#f0f0f5';
-    nameEl.textContent = c.label;
+    nameEl.textContent = label;
 
     const valWrap = document.createElement('div');
     valWrap.style.textAlign = 'right';
 
     const valEl = document.createElement('span');
     valEl.style.cssText = "font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:#f26b6b";
-    valEl.textContent = 'R$ ' + c.val.toLocaleString('pt-BR');
+    valEl.textContent = 'R$ ' + data.val.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
 
     const pctEl = document.createElement('span');
     pctEl.style.cssText = "font-family:'DM Mono',monospace;font-size:10px;color:#9090a8;margin-left:6px";
@@ -1762,9 +1772,9 @@ function renderFixedBars(container, total) {
     track.style.cssText = 'height:8px;background:#1a1a24;border-radius:99px;overflow:hidden';
 
     const fill = document.createElement('div');
-    fill.style.cssText = 'height:100%;border-radius:99px';
-    fill.style.width = widthPct + '%';
-    fill.style.background = c.color;
+    fill.style.cssText = 'height:100%;border-radius:99px;transition:width .5s ease';
+    fill.style.width = pct + '%';
+    fill.style.background = data.color;
 
     track.appendChild(fill);
     row.appendChild(topRow);
@@ -1775,34 +1785,40 @@ function renderFixedBars(container, total) {
 
 function renderFixedList(container, total) {
   container.innerHTML = '';
+
+  // Group items by label
+  const groups = {};
   FIXED_COSTS.forEach(c => {
-    const pct = (c.val / total * 100).toFixed(0);
+    if (!groups[c.label]) groups[c.label] = {items:[], color:c.color, total:0};
+    groups[c.label].items.push(c);
+    groups[c.label].total += c.val;
+  });
 
-    const row = document.createElement('div');
-    row.className = 'cf-row';
+  Object.entries(groups).forEach(([label, group]) => {
+    const isMulti = group.items.length > 1;
+    const groupPct = (group.total / total * 100).toFixed(0);
 
-    // left: color dot + label + sub
-    const left = document.createElement('div');
-    left.style.cssText = 'display:flex;align-items:center;gap:12px;flex:1';
+    // ── Group header row (always visible, clickable if multi) ──
+    const header = document.createElement('div');
+    header.style.cssText = 'display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #1a1a24;cursor:' + (isMulti ? 'pointer' : 'default');
 
     const dot = document.createElement('div');
     dot.style.cssText = 'width:12px;height:12px;border-radius:50%;flex-shrink:0';
-    dot.style.backgroundColor = c.color;
+    dot.style.backgroundColor = group.color;
 
     const info = document.createElement('div');
+    info.style.flex = '1';
     const lbl = document.createElement('div');
     lbl.style.cssText = 'font-size:13px;font-weight:700;color:#f0f0f5';
-    lbl.textContent = c.label;
-    const sub = document.createElement('div');
-    sub.style.cssText = "font-family:'DM Mono',monospace;font-size:10px;color:#9090a8";
-    sub.textContent = c.sub;
+    lbl.textContent = label + (isMulti ? ' (' + group.items.length + ')' : '');
     info.appendChild(lbl);
-    info.appendChild(sub);
+    if (!isMulti) {
+      const sub = document.createElement('div');
+      sub.style.cssText = "font-family:'DM Mono',monospace;font-size:10px;color:#9090a8";
+      sub.textContent = group.items[0].sub;
+      info.appendChild(sub);
+    }
 
-    left.appendChild(dot);
-    left.appendChild(info);
-
-    // right: value + edit btn
     const right = document.createElement('div');
     right.style.cssText = 'display:flex;align-items:center;gap:10px';
 
@@ -1810,24 +1826,85 @@ function renderFixedList(container, total) {
     valWrap.style.textAlign = 'right';
     const valEl = document.createElement('div');
     valEl.style.cssText = "font-family:'DM Mono',monospace;font-size:14px;font-weight:600;color:#f26b6b";
-    valEl.textContent = 'R$ ' + c.val.toLocaleString('pt-BR');
+    valEl.textContent = 'R$ ' + group.total.toLocaleString('pt-BR', {minimumFractionDigits:2,maximumFractionDigits:2});
     const pctEl = document.createElement('div');
     pctEl.style.cssText = "font-family:'DM Mono',monospace;font-size:10px;color:#9090a8";
-    pctEl.textContent = pct + '%';
+    pctEl.textContent = groupPct + '%';
     valWrap.appendChild(valEl);
     valWrap.appendChild(pctEl);
-
-    const editBtn = document.createElement('div');
-    editBtn.style.cssText = 'width:30px;height:30px;border-radius:8px;background:#1a1a24;border:1px solid #3a3a52;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#9090a8;font-size:12px;font-weight:700';
-    editBtn.textContent = 'Edit';
-    editBtn.onclick = (e) => { e.stopPropagation(); openEditFixed(c.id); };
-
     right.appendChild(valWrap);
-    right.appendChild(editBtn);
 
-    row.appendChild(left);
-    row.appendChild(right);
-    container.appendChild(row);
+    // Chevron for multi-item groups
+    if (isMulti) {
+      const chev = document.createElement('div');
+      chev.style.cssText = "font-size:11px;color:#9090a8;transition:transform .2s;font-family:'DM Mono',monospace";
+      chev.textContent = '▶';
+      right.appendChild(chev);
+
+      // ── Expandable sub-items ──
+      const subList = document.createElement('div');
+      subList.style.cssText = 'overflow:hidden;max-height:0;transition:max-height .3s ease';
+
+      group.items.forEach(c => {
+        const itemPct = (c.val / total * 100).toFixed(0);
+        const subRow = document.createElement('div');
+        subRow.style.cssText = 'display:flex;align-items:center;gap:12px;padding:9px 0 9px 24px;border-bottom:1px solid #111118';
+
+        const subInfo = document.createElement('div');
+        subInfo.style.flex = '1';
+        const subLbl = document.createElement('div');
+        subLbl.style.cssText = 'font-size:12px;color:#9090a8';
+        subLbl.textContent = c.sub;
+        subInfo.appendChild(subLbl);
+
+        const subRight = document.createElement('div');
+        subRight.style.cssText = 'display:flex;align-items:center;gap:8px';
+
+        const subVal = document.createElement('div');
+        subVal.style.cssText = "font-family:'DM Mono',monospace;font-size:12px;color:#f26b6b";
+        subVal.textContent = 'R$ ' + c.val.toLocaleString('pt-BR', {minimumFractionDigits:2,maximumFractionDigits:2});
+
+        const editBtn = document.createElement('div');
+        editBtn.style.cssText = 'width:28px;height:28px;border-radius:7px;background:#1a1a24;border:1px solid #3a3a52;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#9090a8;font-size:11px;font-weight:700';
+        editBtn.textContent = 'Edit';
+        editBtn.onclick = (e) => { e.stopPropagation(); openEditFixed(c.id); };
+
+        subRight.appendChild(subVal);
+        subRight.appendChild(editBtn);
+        subRow.appendChild(subInfo);
+        subRow.appendChild(subRight);
+        subList.appendChild(subRow);
+      });
+
+      let open = false;
+      header.onclick = () => {
+        open = !open;
+        subList.style.maxHeight = open ? subList.scrollHeight + 'px' : '0';
+        chev.style.transform = open ? 'rotate(90deg)' : 'rotate(0deg)';
+      };
+
+      container.appendChild(header);
+      container.appendChild(subList);
+    } else {
+      // Single item — show edit button directly
+      const editBtn = document.createElement('div');
+      editBtn.style.cssText = 'width:30px;height:30px;border-radius:8px;background:#1a1a24;border:1px solid #3a3a52;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#9090a8;font-size:12px;font-weight:700';
+      editBtn.textContent = 'Edit';
+      editBtn.onclick = (e) => { e.stopPropagation(); openEditFixed(group.items[0].id); };
+      right.appendChild(editBtn);
+
+      header.appendChild(dot);
+      header.appendChild(info);
+      header.appendChild(right);
+      container.appendChild(header);
+    }
+
+    if (isMulti) {
+      // For multi, build header differently (dot already added above for single)
+      header.insertBefore(dot, header.firstChild);
+      header.insertBefore(info, right);
+      header.appendChild(right);
+    }
   });
 }
 
