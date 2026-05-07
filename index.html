@@ -647,7 +647,7 @@ background: #7c6af710;
   <!-- HEADER -->
   <div class="header">
     <div class="header-logo">Finflow</div>
-    <div class="header-month">May 2026</div>
+    <div class="header-month">June 2026</div>
   </div>
 
   <!-- PAGES -->
@@ -660,12 +660,12 @@ background: #7c6af710;
   <div class="kpi-row">
     <div class="kpi kpi-clickable" onclick="openKpiDetail('card')">
       <div class="kpi-label">Credit Card ›</div>
-      <div class="kpi-value kpi-negative" id="kpi-card">R$ 8,652</div>
-      <div class="kpi-sub">53% of salary</div>
+      <div class="kpi-value kpi-negative" id="kpi-card">R$ 4.428</div>
+      <div class="kpi-sub">27% of salary</div>
     </div>
     <div class="kpi kpi-clickable" onclick="openKpiDetail('fixed')">
       <div class="kpi-label">Fixed Costs ›</div>
-      <div class="kpi-value kpi-negative" id="kpi-fixed">R$ 6,300</div>
+      <div class="kpi-value kpi-negative" id="kpi-fixed">R$ 7,137</div>
       <div class="kpi-sub">Rent · fuel · pet · sports</div>
     </div>
     <div class="kpi kpi-clickable" onclick="openKpiDetail('invest')">
@@ -674,9 +674,9 @@ background: #7c6af710;
       <div class="kpi-sub">18.5% of salary</div>
     </div>
     <div class="kpi kpi-clickable" onclick="openKpiDetail('balance')">
-      <div class="kpi-label">Free Balance ›</div>
-      <div class="kpi-value kpi-yellow" id="kpi-balance">−R$ 1,757</div>
-      <div class="kpi-sub">May summary</div>
+      <div class="kpi-label">Available to Invest ›</div>
+      <div class="kpi-value kpi-positive" id="kpi-balance">R$ 1,215</div>
+      <div class="kpi-sub">Income − fixed − card</div>
     </div>
   </div>
 
@@ -741,15 +741,15 @@ background: #7c6af710;
   <div class="card" style="background: linear-gradient(135deg,#1a1a24,#111118)">
     <div class="cf-row">
       <div><div class="cf-label">Total Out</div></div>
-      <div class="cf-amount" style="color:var(--red)">−R$ 14,952</div>
+      <div class="cf-amount" style="color:var(--red)">−R$ 15,565</div>
     </div>
     <div class="divider"></div>
     <div class="cf-row">
       <div><div class="cf-label" style="font-size:15px">Free Balance</div></div>
-      <div class="cf-amount" style="font-size:20px;color:var(--red)">−R$ 757</div>
+      <div class="cf-amount" style="font-size:20px;color:var(--red)">+R$ 630</div>
     </div>
     <div style="margin-top:10px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted2)">
-      ⚠ May is tight. From July, balance improves significantly as large installments end.
+      💡 Available to invest = Income − Fixed Costs − Credit Card. Does not deduct investment (that is your choice).
     </div>
   </div>
 
@@ -1030,8 +1030,8 @@ const TYPE_COLORS = {
 // ═══════════════════════════════════════════════════════
 var FIXED_COSTS = [
   {id:1, label:"House",    sub:"Rent",                    val:4500, color:"#7c6af7"},
-  {id:2, label:"House",    sub:"Rent",                    val:540,  color:"#7c6af7"},
-  {id:3, label:"Sports",   sub:"BR + CGFit + Wellhub",    val:1495, color:"#f5c842"},
+  {id:2, label:"House",    sub:"Cleaning",                val:540,  color:"#7c6af7"},
+  {id:3, label:"Sports",   sub:"BR + Wellhub",            val:1080, color:"#f5c842"},
   {id:4, label:"Fuel",     sub:"Estimated monthly",       val:500,  color:"#fbbf24"},
   {id:5, label:"Pet",      sub:"Food",                    val:315,  color:"#fb923c"},
   {id:6, label:"Pet",      sub:"Bath",                    val:202,  color:"#fb923c"},
@@ -1100,99 +1100,61 @@ const CAT_META = {
   "Fuel":          { color: "#fbbf24", emoji: "&#x26FD;" },
   "Online":        { color: "#60a5fa", emoji: "&#x1F6CD;" },
   "Subscription":  { color: "#c084fc", emoji: "&#x1F514;" },
+  "Apparel":        { color: "#f472b6", emoji: "&#x1F455;" },
 };
 
 const TRANSACTIONS = [
-  {date:"25/04",name:"Record rodrigues alves",cat:"Food",type:"Digital Wallet",val:7.99,p:null,pt:null},
-  {date:"25/04",name:"Amigao ourinhos",cat:"Supermarket",type:"Digital Wallet",val:22.96,p:null,pt:null},
-  {date:"25/04",name:"Oakberry acai ourinhos",cat:"Food",type:"Digital Wallet",val:36.99,p:null,pt:null},
-  {date:"25/04",name:"Arena restaurante 4",cat:"Food",type:"Digital Wallet",val:93.75,p:null,pt:null},
-  {date:"25/04",name:"Groenlandia auto posto",cat:"Fuel",type:"Digital Wallet",val:290.00,p:null,pt:null},
-  {date:"24/04",name:"Santo ancho la parrill",cat:"Food",type:"Digital Wallet",val:170.50,p:null,pt:null},
-  {date:"23/04",name:"Pousada hoteis",cat:"Entertainment",type:"Digital Wallet",val:651.00,p:null,pt:null},
-  {date:"23/04",name:"A toca da fera",cat:"Food",type:"Digital Wallet",val:185.34,p:null,pt:null},
-  {date:"23/04",name:"2atelie confeitaria",cat:"Food",type:"Digital Wallet",val:120.00,p:null,pt:null},
-  {date:"23/04",name:"Amigao ourinhos",cat:"Supermarket",type:"Digital Wallet",val:39.15,p:null,pt:null},
-  {date:"22/04",name:"Mercadolivre*lab",cat:"Online",type:"Virtual Card",val:280.93,p:null,pt:null},
-  {date:"22/04",name:"Google One",cat:"Subscription",type:"Virtual Card",val:12.50,p:null,pt:null},
-  {date:"21/04",name:"Petlove order",cat:"Pet",type:"Digital Wallet",val:305.60,p:null,pt:null},
-  {date:"21/04",name:"Paul shop comercio",cat:"Other",type:"Digital Wallet",val:229.08,p:1,pt:2},
-  {date:"21/04",name:"Bf spp 92",cat:"Other",type:"Digital Wallet",val:159.98,p:1,pt:5},
-  {date:"21/04",name:"Mp *lanchesd-ct i",cat:"Food",type:"Digital Wallet",val:17.00,p:null,pt:null},
-  {date:"21/04",name:"Drogasil",cat:"Health",type:"Digital Wallet",val:20.04,p:null,pt:null},
-  {date:"20/04",name:"Dm *helphbomaxcom",cat:"Subscription",type:"Virtual Card",val:15.90,p:null,pt:null},
-  {date:"19/04",name:"Petz zee now temple",cat:"Pet",type:"Digital Wallet",val:12.00,p:null,pt:null},
-  {date:"18/04",name:"Ifd*papila restaurante",cat:"Food",type:"Digital Wallet",val:173.69,p:null,pt:null},
-  {date:"18/04",name:"Mp *lanchesdaluci",cat:"Food",type:"Digital Wallet",val:17.00,p:null,pt:null},
-  {date:"18/04",name:"Batistini",cat:"Food",type:"Digital Wallet",val:9.10,p:null,pt:null},
-  {date:"18/04",name:"Água de coco",cat:"Food",type:"Digital Wallet",val:17.00,p:null,pt:null},
-  {date:"17/04",name:"Dl*uberrides",cat:"Transport",type:"Virtual Card",val:28.83,p:null,pt:null},
-  {date:"16/04",name:"Mp *mackbrillconv",cat:"Other",type:"Digital Wallet",val:115.00,p:null,pt:null},
-  {date:"14/04",name:"Espaço Til",cat:"Home",type:"Digital Wallet",val:586.25,p:1,pt:4},
-  {date:"12/04",name:"53073895alberto",cat:"Other",type:"Digital Wallet",val:20.00,p:null,pt:null},
-  {date:"12/04",name:"53073895alberto",cat:"Other",type:"Digital Wallet",val:6.00,p:null,pt:null},
-  {date:"11/04",name:"Padaria maresias",cat:"Food",type:"Digital Wallet",val:16.95,p:null,pt:null},
-  {date:"11/04",name:"As ilhas auto posto",cat:"Fuel",type:"Digital Wallet",val:266.16,p:null,pt:null},
-  {date:"11/04",name:"Boissu conveniencia",cat:"Food",type:"Digital Wallet",val:26.00,p:null,pt:null},
-  {date:"11/04",name:"Jetpoint",cat:"Other",type:"Digital Wallet",val:7.00,p:null,pt:null},
-  {date:"11/04",name:"Padaria maresias ltda",cat:"Food",type:"Digital Wallet",val:47.95,p:null,pt:null},
-  {date:"11/04",name:"Cafe circ. mar",cat:"Food",type:"Digital Wallet",val:20.00,p:null,pt:null},
-  {date:"11/04",name:"Cafe circ. mar",cat:"Food",type:"Digital Wallet",val:6.00,p:null,pt:null},
-  {date:"10/04",name:"Bikeok romeiros",cat:"Sports",type:"Digital Wallet",val:13.00,p:null,pt:null},
-  {date:"10/04",name:"Gato e caopanhia",cat:"Pet",type:"Digital Wallet",val:45.00,p:null,pt:null},
-  {date:"09/04",name:"Pg *verte tapetes",cat:"Home",type:"Virtual Card",val:374.75,p:1,pt:4},
-  {date:"08/04",name:"Pao de acucar",cat:"Supermarket",type:"Digital Wallet",val:95.56,p:null,pt:null},
-  {date:"08/04",name:"Lustres yamamura",cat:"Home",type:"Digital Wallet",val:303.50,p:1,pt:2},
-  {date:"07/04",name:"Recovery dux",cat:"Sports",type:"Virtual Card",val:143.77,p:null,pt:null},
-  {date:"07/04",name:"Mercadolivre*lojadasn",cat:"Online",type:"Virtual Card",val:143.77,p:null,pt:null},
-  {date:"06/04",name:"Zul zona azul",cat:"Transport",type:"Virtual Card",val:6.95,p:null,pt:null},
-  {date:"06/04",name:"Mlp*magalu-sloth",cat:"Sports",type:"Virtual Card",val:111.54,p:1,pt:5},
-  {date:"05/04",name:"Zig *parque ibirapu",cat:"Entertainment",type:"Digital Wallet",val:17.00,p:null,pt:null},
-  {date:"05/04",name:"Escalada",cat:"Sports",type:"Digital Wallet",val:279.04,p:null,pt:null},
-  {date:"04/04",name:"Ifd*dengo chocolates",cat:"Food",type:"Digital Wallet",val:216.89,p:null,pt:null},
-  {date:"04/04",name:"Bosco restaurante",cat:"Food",type:"Digital Wallet",val:227.13,p:null,pt:null},
-  {date:"04/04",name:"Vila mais",cat:"Other",type:"Digital Wallet",val:40.00,p:null,pt:null},
-  {date:"03/04",name:"Ec *melimais",cat:"Subscription",type:"Virtual Card",val:9.90,p:null,pt:null},
-  {date:"03/04",name:"Carrinho fami silva",cat:"Other",type:"Digital Wallet",val:29.00,p:null,pt:null},
-  {date:"03/04",name:"Flash car lava rapido",cat:"Car",type:"Digital Wallet",val:80.00,p:null,pt:null},
-  {date:"02/04",name:"Amazon digital br",cat:"Book",type:"Virtual Card",val:82.51,p:null,pt:null},
-  {date:"01/04",name:"Pao de acucar-0011",cat:"Supermarket",type:"Digital Wallet",val:40.58,p:null,pt:null},
-  {date:"31/03",name:"Leroy merlin",cat:"Home",type:"Digital Wallet",val:167.88,p:null,pt:null},
-  {date:"27/03",name:"Pet love*clube",cat:"Pet",type:"Virtual Card",val:9.99,p:2,pt:12},
-  {date:"19/03",name:"Electrolux electro",cat:"Home",type:"Virtual Card",val:66.49,p:2,pt:10},
-  {date:"18/03",name:"Espaço Til",cat:"Home",type:"Digital Wallet",val:-0.04,p:null,pt:null},
-  {date:"18/03",name:"Espaço Til almofadas",cat:"Home",type:"Digital Wallet",val:336.68,p:2,pt:3},
-  {date:"05/03",name:"Fastsho*fasts",cat:"Home",type:"Virtual Card",val:-0.49,p:null,pt:null},
-  {date:"05/03",name:"TV",cat:"Home",type:"Virtual Card",val:1126.88,p:2,pt:8},
-  {date:"02/03",name:"Pdv*bazar das tint",cat:"Home",type:"Digital Wallet",val:195.90,p:2,pt:3},
-  {date:"08/02",name:"Nike",cat:"Fashion",type:"Digital Wallet",val:106.43,p:3,pt:5},
-  {date:"19/01",name:"Disney Plus",cat:"Streaming",type:"Virtual Card",val:46.88,p:4,pt:12},
-  {date:"24/11",name:"Asics - recife",cat:"Fashion",type:"Digital Wallet",val:60.04,p:6,pt:6},
-  {date:"07/11",name:"Fairfax brasil seg",cat:"Sports",type:"Virtual Card",val:130.01,p:6,pt:11},
-  {date:"19/09",name:"Payu *adidas",cat:"Sports",type:"Virtual Card",val:112.08,p:8,pt:10},
+  {date:"05/03", name:"TV (Fastshop)",          cat:"Home",        type:"Virtual Card",   val:1126.88, p:3,    pt:8},
+  {date:"14/04", name:"Espaço Til",              cat:"Home",        type:"Digital Wallet", val:586.25,  p:2,    pt:4},
+  {date:"09/04", name:"Pg Verte Tapetes",        cat:"Home",        type:"Virtual Card",   val:374.75,  p:2,    pt:4},
+  {date:"18/03", name:"Espaço Til almofadas",    cat:"Home",        type:"Digital Wallet", val:336.68,  p:3,    pt:3},
+  {date:"08/04", name:"Lustres Yamamura",        cat:"Home",        type:"Digital Wallet", val:303.50,  p:2,    pt:2},
+  {date:"21/04", name:"Paul Shop Comercio",      cat:"Other",       type:"Digital Wallet", val:229.08,  p:2,    pt:2},
+  {date:"02/03", name:"Pdv Bazar das Tint",      cat:"Home",        type:"Digital Wallet", val:195.90,  p:3,    pt:3},
+  {date:"21/04", name:"Bf Spp 92",               cat:"Other",       type:"Digital Wallet", val:159.98,  p:2,    pt:5},
+  {date:"07/11", name:"Seguro Bicicleta",        cat:"Sports",      type:"Virtual Card",   val:130.01,  p:7,    pt:11},
+  {date:"19/09", name:"Adidas (tenis)",          cat:"Sports",      type:"Virtual Card",   val:112.08,  p:9,    pt:10},
+  {date:"06/04", name:"Mlp Magalu",              cat:"Home",        type:"Virtual Card",   val:111.54,  p:2,    pt:5},
+  {date:"08/02", name:"Nike",                    cat:"Apparel",     type:"Digital Wallet", val:106.43,  p:4,    pt:5},
+  {date:"19/03", name:"Electrolux",              cat:"Home",        type:"Virtual Card",   val:66.49,   p:3,    pt:10},
+  {date:"19/01", name:"Disney Plus",             cat:"Streaming",   type:"Virtual Card",   val:46.88,   p:5,    pt:12},
+  {date:"27/03", name:"Pet Love Clube",          cat:"Pet",         type:"Virtual Card",   val:9.99,    p:3,    pt:12},
+  {date:"29/04", name:"Pao de Acucar-0001",      cat:"Supermarket", type:"Digital Wallet", val:61.76,   p:null, pt:null},
+  {date:"29/04", name:"Provet Ins Bras Diag",    cat:"Pet",         type:"Digital Wallet", val:65.00,   p:null, pt:null},
+  {date:"28/04", name:"Bakehaus",                cat:"Food",        type:"Digital Wallet", val:28.00,   p:null, pt:null},
+  {date:"27/04", name:"Pao de Acucar-0011",      cat:"Supermarket", type:"Digital Wallet", val:78.21,   p:null, pt:null},
+  {date:"27/04", name:"Mercadolivre*Rcshop",     cat:"Sports",      type:"Virtual Card",   val:24.99,   p:null, pt:null},
+  {date:"27/04", name:"Mercadolivre*Vilelabi",   cat:"Sports",      type:"Virtual Card",   val:47.99,   p:null, pt:null},
+  {date:"26/04", name:"CCM Auto Posto 2",        cat:"Fuel",        type:"Digital Wallet", val:198.26,  p:null, pt:null},
+  {date:"26/04", name:"Paloma Restaurante",      cat:"Food",        type:"Digital Wallet", val:20.80,   p:null, pt:null},
+  {date:"26/04", name:"Pousada Hoteis",          cat:"Food",        type:"Digital Wallet", val:7.00,    p:null, pt:null},
 ];
 
 const INSTALLMENTS = [
-  {name:"TV",            cat:"Home",    desc:"Television",          p:2, pt:8,  monthly:1126.88},
-  {name:"Espaço Til",    cat:"Home",    desc:"Armchair / table",    p:1, pt:4,  monthly:586.25},
-  {name:"Verte tapetes", cat:"Home",    desc:"Rug",                 p:1, pt:4,  monthly:374.75},
-  {name:"Espaço Til",    cat:"Home",    desc:"Cushions / blanket",  p:2, pt:3,  monthly:336.68},
-  {name:"Lustres yamamura",cat:"Home",  desc:"Light fixtures",      p:1, pt:2,  monthly:303.50},
-  {name:"Paul shop",     cat:"Other",   desc:"Paul shop purchase",  p:1, pt:2,  monthly:229.08},
-  {name:"Bazar das tint",cat:"Home",    desc:"Wall paint",          p:2, pt:3,  monthly:195.90},
-  {name:"Bf spp 92",     cat:"Other",   desc:"BF SPP purchase",     p:1, pt:5,  monthly:159.98},
-  {name:"Fairfax seg",   cat:"Sports",  desc:"Bike insurance",      p:6, pt:11, monthly:130.01},
-  {name:"Payu *adidas",  cat:"Sports",  desc:"Adidas sneakers",     p:8, pt:10, monthly:112.08},
-  {name:"Mlp*magalu",    cat:"Sports",  desc:"Swimming goggles",    p:1, pt:5,  monthly:111.54},
-  {name:"Nike",          cat:"Fashion", desc:"Sneakers",            p:3, pt:5,  monthly:106.43},
-  {name:"Electrolux",    cat:"Home",    desc:"Water purifier",      p:2, pt:10, monthly:66.49},
-  {name:"Disney Plus",   cat:"Streaming",desc:"Disney+",            p:4, pt:12, monthly:46.88},
-  {name:"Asics",         cat:"Fashion", desc:"Last installment ✓",  p:6, pt:6,  monthly:60.04},
-  {name:"Pet love",      cat:"Pet",     desc:"Petlove Plus",        p:2, pt:12, monthly:9.99},
+  // Updated to June 2026 — all current numbers advanced by 1
+  {id: 1,  name: "TV",              category: "Home",      description: "Television",           current: 3, total: 8,  monthly: 1126.88},
+  {id: 2,  name: "Espaço Til",      category: "Home",      description: "Armchair / table",     current: 2, total: 4,  monthly: 586.25},
+  {id: 3,  name: "Verte tapetes",   category: "Home",      description: "Rug",                  current: 2, total: 4,  monthly: 374.75},
+  {id: 4,  name: "Espaço Til",      category: "Home",      description: "Cushions / blanket",   current: 3, total: 3,  monthly: 336.68},
+  {id: 5,  name: "Lustres yamamura",category: "Home",      description: "Light fixtures",       current: 2, total: 2,  monthly: 303.50},
+  {id: 6,  name: "Paul shop",       category: "Other",     description: "Paul shop purchase",   current: 2, total: 2,  monthly: 229.08},
+  {id: 7,  name: "Bazar das tint",  category: "Home",      description: "Wall paint",           current: 3, total: 3,  monthly: 195.90},
+  {id: 8,  name: "Bf spp 92",       category: "Other",     description: "BF SPP purchase",      current: 2, total: 5,  monthly: 159.98},
+  {id: 9,  name: "Fairfax seg",     category: "Sports",    description: "Bike insurance",       current: 7, total: 11, monthly: 130.01},
+  {id: 10, name: "Payu Adidas",     category: "Sports",    description: "Adidas sneakers",      current: 9, total: 10, monthly: 112.08},
+  {id: 11, name: "Mlp Magalu",      category: "Sports",    description: "Swimming goggles",     current: 2, total: 5,  monthly: 111.54},
+  {id: 12, name: "Nike",            category: "Fashion",   description: "Sneakers",             current: 4, total: 5,  monthly: 106.43},
+  {id: 13, name: "Electrolux",      category: "Home",      description: "Water purifier",       current: 3, total: 10, monthly: 66.49},
+  {id: 14, name: "Disney Plus",     category: "Streaming", description: "Disney+ subscription", current: 5, total: 12, monthly: 46.88},
+  {id: 16, name: "Pet love",        category: "Pet",       description: "Petlove Plus club",    current: 3, total: 12, monthly: 9.99},
+  // Ending this month (last installment in June):
+  {id: 4,  name: "Espaço Til alm.", category: "Home",      description: "Cushions — LAST ✓",   current: 3, total: 3,  monthly: 336.68},
+  {id: 5,  name: "Lustres yamamura",category: "Home",      description: "Light fixtures — LAST ✓",current:2,total:2, monthly: 303.50},
+  {id: 6,  name: "Paul shop",       category: "Other",     description: "Paul shop — LAST ✓",  current: 2, total: 2,  monthly: 229.08},
+  {id: 7,  name: "Bazar das tint",  category: "Home",      description: "Wall paint — LAST ✓",  current: 3, total: 3,  monthly: 195.90},
 ];
 
 const FORECAST = [
-  {month:"June 2026",    card:3871, invest:4000, balance:166},
   {month:"July 2026",    card:2692, invest:4858, balance:2345},
   {month:"August 2026",  card:2692, invest:4858, balance:2345},
   {month:"September 2026",card:2580,invest:4858, balance:2415},
@@ -1202,12 +1164,12 @@ const FORECAST = [
 ];
 
 const FIXED = [
-  {label:"House",   sub:"Rent",                 val:4500},
-  {label:"House",   sub:"Rent",                 val:540},
-  {label:"Sports",  sub:"BR + CGFit + Wellhub", val:1495},
-  {label:"Fuel",    sub:"Estimated monthly",    val:500},
-  {label:"Pet",     sub:"Food",                 val:315},
-  {label:"Pet",     sub:"Bath",                 val:202},
+  {label:"House",   sub:"Rent",              val:4500},
+  {label:"House",   sub:"Cleaning",          val:540},
+  {label:"Sports",  sub:"BR + Wellhub",      val:1080},
+  {label:"Fuel",    sub:"Estimated monthly", val:500},
+  {label:"Pet",     sub:"Food",              val:315},
+  {label:"Pet",     sub:"Bath",              val:202},
 ];
 
 // ═══════════════════════════════════════════════════════
@@ -1693,8 +1655,8 @@ function openKpiDetail(type) {
       subtitle.textContent = 'Monthly contribution goal';
       buildInvestDetail(body);
     } else if (type === 'balance') {
-      title.textContent = 'Free Balance';
-      subtitle.textContent = 'What remains after all outflows';
+      title.textContent = 'Available to Invest';
+      subtitle.textContent = 'Income − fixed costs − credit card';
       buildBalanceDetail(body);
     }
 
@@ -2062,17 +2024,15 @@ function buildBalanceDetail(body) {
   const salary  = 16195;
   const card    = TRANSACTIONS.filter(t=>t.val>0).reduce((a,t)=>a+t.val,0);
   const fixed   = FIXED_COSTS.reduce((a,c)=>a+c.val,0);
-  const invest  = 3000;
-  const balance = salary - card - fixed - invest;
+  const balance = salary - card - fixed;
 
   const items = [
-    {label:'Salary',       val:salary,  color:'var(--green)', sign:'+'},
-    {label:'Credit Card',  val:-card,   color:'var(--red)',   sign:''},
-    {label:'Fixed Costs',  val:-fixed,  color:'var(--red)',   sign:''},
-    {label:'Investment',   val:-invest, color:'var(--accent2)',sign:''},
+    {label:'Monthly Salary', val:salary, color:'#3ecf8e', sign:'+'},
+    {label:'Fixed Costs',    val:-fixed, color:'#f26b6b', sign:''},
+    {label:'Credit Card',    val:-card,  color:'#f26b6b', sign:''},
   ];
 
-  body.innerHTML = `
+  const body_html = `
     <div class="card" style="margin-bottom:12px">
       ${items.map(i=>`
         <div class="cf-row">
@@ -2080,16 +2040,17 @@ function buildBalanceDetail(body) {
           <div style="font-family:'DM Mono',monospace;font-size:14px;font-weight:600;color:${i.color}">${i.sign}R$ ${Math.abs(i.val).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
         </div>
       `).join('')}
-      <div style="height:1px;background:var(--border);margin:10px 0"></div>
+      <div style="height:1px;background:#3a3a52;margin:10px 0"></div>
       <div class="cf-row">
-        <div style="font-size:15px;font-weight:800">Free Balance</div>
-        <div style="font-family:'DM Mono',monospace;font-size:18px;font-weight:800;color:${balance>=0?'var(--green)':'var(--red)'}">${balance>=0?'+':''}R$ ${Math.abs(balance).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
+        <div style="font-size:15px;font-weight:800">Available to Invest</div>
+        <div style="font-family:'DM Mono',monospace;font-size:18px;font-weight:800;color:${balance>=0?'#3ecf8e':'#f26b6b'}">${balance>=0?'+':''}R$ ${Math.abs(balance).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
       </div>
     </div>
-    <div style="background:#7c6af710;border:1px solid #7c6af730;border-radius:12px;padding:12px 14px;font-size:11px;color:var(--accent2);font-family:'DM Mono',monospace;line-height:1.7">
-      ⚠ May is the tightest month due to large installments (TV, home furnishings). From July, free balance improves to <strong style="color:var(--green)">+R$ 2,345</strong>/month as major parcelas end.
+    <div style="background:#7c6af710;border:1px solid #7c6af730;border-radius:12px;padding:12px 14px;font-size:11px;color:#a594ff;font-family:'DM Mono',monospace;line-height:1.7">
+      💡 This is what you have available to invest each month after all fixed costs and credit card. From July, this grows significantly as large installments end.
     </div>
   `;
+  body.innerHTML = body_html;
 }
 
 
