@@ -11,6 +11,7 @@
 <meta name="color-scheme" content="dark">
 <style>:root { color-scheme: dark; }</style>
 <title>Finflow</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -1611,13 +1612,153 @@ zone.addEventListener('drop', e => {
 // ═══════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════
-buildDonut();
-buildStatement(TRANSACTIONS);
-buildInstallments();
-buildCashFlow();
-buildForecast();
-buildCatChips();
-buildInvestmentsPage();
+// ═══════════════════════════════════════════════════════
+// SUPABASE SETUP
+// ═══════════════════════════════════════════════════════
+const SUPA_URL = "https://rrtiyaepwrlerctqlkdf.supabase.co";
+const SUPA_KEY = "sb_publishable_MkI4yZIf6zb7Obi9_5CXQA_iA8LR4Hu";
+const supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+// ── Seed data (runs once if tables are empty) ──────────
+const SEED_TRANSACTIONS = [
+  {date:"05/03",name:"TV (Fastshop)",         cat:"Home",        type:"Virtual Card",   val:1126.88,p:3, pt:8},
+  {date:"14/04",name:"Espaço Til",            cat:"Home",        type:"Digital Wallet", val:586.25, p:2, pt:4},
+  {date:"09/04",name:"Pg Verte Tapetes",      cat:"Home",        type:"Virtual Card",   val:374.75, p:2, pt:4},
+  {date:"18/03",name:"Espaço Til almofadas",  cat:"Home",        type:"Digital Wallet", val:336.68, p:3, pt:3},
+  {date:"08/04",name:"Lustres Yamamura",      cat:"Home",        type:"Digital Wallet", val:303.50, p:2, pt:2},
+  {date:"21/04",name:"Paul Shop Comercio",    cat:"Other",       type:"Digital Wallet", val:229.08, p:2, pt:2},
+  {date:"02/03",name:"Pdv Bazar das Tint",    cat:"Home",        type:"Digital Wallet", val:195.90, p:3, pt:3},
+  {date:"21/04",name:"Bf Spp 92",             cat:"Other",       type:"Digital Wallet", val:159.98, p:2, pt:5},
+  {date:"07/11",name:"Seguro Bicicleta",      cat:"Sports",      type:"Virtual Card",   val:130.01, p:7, pt:11},
+  {date:"19/09",name:"Adidas (tenis)",        cat:"Sports",      type:"Virtual Card",   val:112.08, p:9, pt:10},
+  {date:"06/04",name:"Mlp Magalu",            cat:"Home",        type:"Virtual Card",   val:111.54, p:2, pt:5},
+  {date:"08/02",name:"Nike",                  cat:"Apparel",     type:"Digital Wallet", val:106.43, p:4, pt:5},
+  {date:"19/03",name:"Electrolux",            cat:"Home",        type:"Virtual Card",   val:66.49,  p:3, pt:10},
+  {date:"19/01",name:"Disney Plus",           cat:"Streaming",   type:"Virtual Card",   val:46.88,  p:5, pt:12},
+  {date:"27/03",name:"Pet Love Clube",        cat:"Pet",         type:"Virtual Card",   val:9.99,   p:3, pt:12},
+  {date:"29/04",name:"Pao de Acucar-0001",    cat:"Supermarket", type:"Digital Wallet", val:61.76,  p:null,pt:null},
+  {date:"29/04",name:"Provet Ins Bras Diag",  cat:"Pet",         type:"Digital Wallet", val:65.00,  p:null,pt:null},
+  {date:"28/04",name:"Bakehaus",              cat:"Food",        type:"Digital Wallet", val:28.00,  p:null,pt:null},
+  {date:"27/04",name:"Pao de Acucar-0011",    cat:"Supermarket", type:"Digital Wallet", val:78.21,  p:null,pt:null},
+  {date:"27/04",name:"Mercadolivre*Rcshop",   cat:"Sports",      type:"Virtual Card",   val:24.99,  p:null,pt:null},
+  {date:"27/04",name:"Mercadolivre*Vilelabi", cat:"Sports",      type:"Virtual Card",   val:47.99,  p:null,pt:null},
+  {date:"26/04",name:"CCM Auto Posto 2",      cat:"Fuel",        type:"Digital Wallet", val:198.26, p:null,pt:null},
+  {date:"26/04",name:"Paloma Restaurante",    cat:"Food",        type:"Digital Wallet", val:20.80,  p:null,pt:null},
+  {date:"26/04",name:"Pousada Hoteis",        cat:"Food",        type:"Digital Wallet", val:7.00,   p:null,pt:null},
+];
+
+const SEED_FIXED = [
+  {id:1,label:"House", sub:"Rent",            val:4500,color:"#7c6af7"},
+  {id:2,label:"House", sub:"Cleaning",        val:540, color:"#7c6af7"},
+  {id:3,label:"Sports",sub:"BR + Wellhub",    val:1080,color:"#f5c842"},
+  {id:4,label:"Fuel",  sub:"Estimated monthly",val:500,color:"#fbbf24"},
+  {id:5,label:"Pet",   sub:"Food",            val:315, color:"#fb923c"},
+  {id:6,label:"Pet",   sub:"Bath",            val:202, color:"#fb923c"},
+];
+
+const SEED_INSTALLMENTS = [
+  {id:1, name:"TV (Fastshop)",       category:"Home",     description:"Television",        current_p:3, total_p:8,  monthly:1126.88},
+  {id:2, name:"Espaço Til",          category:"Home",     description:"Armchair/table",    current_p:2, total_p:4,  monthly:586.25},
+  {id:3, name:"Verte Tapetes",       category:"Home",     description:"Rug",               current_p:2, total_p:4,  monthly:374.75},
+  {id:4, name:"Espaço Til alm.",     category:"Home",     description:"Cushions/blanket",  current_p:3, total_p:3,  monthly:336.68},
+  {id:5, name:"Lustres Yamamura",    category:"Home",     description:"Light fixtures",    current_p:2, total_p:2,  monthly:303.50},
+  {id:6, name:"Paul Shop",           category:"Other",    description:"Paul shop",         current_p:2, total_p:2,  monthly:229.08},
+  {id:7, name:"Bazar das Tint",      category:"Home",     description:"Wall paint",        current_p:3, total_p:3,  monthly:195.90},
+  {id:8, name:"Bf Spp 92",           category:"Other",    description:"BF SPP",            current_p:2, total_p:5,  monthly:159.98},
+  {id:9, name:"Seguro Bicicleta",    category:"Sports",   description:"Bike insurance",    current_p:7, total_p:11, monthly:130.01},
+  {id:10,name:"Adidas (tenis)",      category:"Sports",   description:"Adidas sneakers",   current_p:9, total_p:10, monthly:112.08},
+  {id:11,name:"Mlp Magalu",          category:"Home",     description:"Magalu purchase",   current_p:2, total_p:5,  monthly:111.54},
+  {id:12,name:"Nike",                category:"Apparel",  description:"Sneakers",          current_p:4, total_p:5,  monthly:106.43},
+  {id:13,name:"Electrolux",          category:"Home",     description:"Water purifier",    current_p:3, total_p:10, monthly:66.49},
+  {id:14,name:"Disney Plus",         category:"Streaming",description:"Disney+",           current_p:5, total_p:12, monthly:46.88},
+  {id:15,name:"Pet Love Clube",      category:"Pet",      description:"Petlove Plus",      current_p:3, total_p:12, monthly:9.99},
+];
+
+// ── Loading screen ─────────────────────────────────────
+function showLoading(msg) {
+  let el = document.getElementById('loading-overlay');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'loading-overlay';
+    el.style.cssText = 'position:fixed;inset:0;background:#0a0a0f;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px';
+    el.innerHTML = '<div style="width:40px;height:40px;border:3px solid #ffffff18;border-top-color:#a594ff;border-radius:50%;animation:spin .8s linear infinite"></div><div id="loading-msg" style="font-family:DM Mono,monospace;font-size:12px;color:#6b6b80"></div>';
+    document.body.appendChild(el);
+  }
+  document.getElementById('loading-msg').textContent = msg;
+}
+
+function hideLoading() {
+  const el = document.getElementById('loading-overlay');
+  if (el) el.remove();
+}
+
+// ── Main init ──────────────────────────────────────────
+async function initApp() {
+  showLoading('Connecting to database…');
+  try {
+    // Check if tables have data
+    const { data: txCheck } = await supa.from('transactions').select('id').limit(1);
+
+    if (!txCheck || txCheck.length === 0) {
+      // First run — seed all data
+      showLoading('Setting up your data…');
+      await supa.from('transactions').insert(SEED_TRANSACTIONS);
+      await supa.from('fixed_costs').insert(SEED_FIXED);
+      await supa.from('installments').insert(SEED_INSTALLMENTS);
+    }
+
+    // Load all data from Supabase
+    showLoading('Loading transactions…');
+    const { data: txData }   = await supa.from('transactions').select('*').order('created_at', {ascending:false});
+    const { data: fcData }   = await supa.from('fixed_costs').select('*').order('id');
+    const { data: instData } = await supa.from('installments').select('*').order('id');
+
+    // Map to app format
+    TRANSACTIONS.length = 0;
+    (txData || []).forEach(t => TRANSACTIONS.push({
+      id:t.id, date:t.date, name:t.name, cat:t.cat,
+      type:t.type, val:parseFloat(t.val),
+      p:t.p || null, pt:t.pt || null
+    }));
+
+    FIXED_COSTS.length = 0;
+    (fcData || []).forEach(c => FIXED_COSTS.push({
+      id:c.id, label:c.label, sub:c.sub,
+      val:parseFloat(c.val), color:c.color
+    }));
+
+    INSTALLMENTS.length = 0;
+    (instData || []).forEach(i => INSTALLMENTS.push({
+      id:i.id, name:i.name, category:i.category,
+      description:i.description,
+      current:i.current_p, total:i.total_p,
+      monthly:parseFloat(i.monthly)
+    }));
+
+    hideLoading();
+    buildDonut();
+    buildStatement(TRANSACTIONS);
+    buildInstallments();
+    buildCashFlow();
+    buildForecast();
+    buildCatChips();
+    buildInvestmentsPage();
+
+  } catch(err) {
+    hideLoading();
+    console.error('Init error:', err);
+    // Fall back to local data
+    buildDonut();
+    buildStatement(TRANSACTIONS);
+    buildInstallments();
+    buildCashFlow();
+    buildForecast();
+    buildCatChips();
+    buildInvestmentsPage();
+  }
+}
+
+initApp();
 
 let fixedEditId = null; // null = new
 
@@ -1969,6 +2110,19 @@ function saveFixed() {
     if (cost) { cost.label = label; cost.val = amount; cost.sub = note||cost.sub; }
   }
 
+  // Sync to Supabase
+  if (fixedEditId === null) {
+    const newest = FIXED_COSTS[FIXED_COSTS.length-1];
+    supa.from('fixed_costs').insert([{
+      id:newest.id, label:newest.label,
+      sub:newest.sub, val:newest.val, color:newest.color
+    }]).then(({error}) => { if(error) console.error('FC insert error:',error); });
+  } else {
+    const c = FIXED_COSTS.find(c=>c.id===fixedEditId);
+    if (c) supa.from('fixed_costs').update({
+      label:c.label, sub:c.sub, val:c.val
+    }).eq('id',c.id).then(({error}) => { if(error) console.error('FC update error:',error); });
+  }
   closeEditFixed();
   refreshFixedDetail();
 }
@@ -1976,7 +2130,10 @@ function saveFixed() {
 function deleteFixed() {
   if (fixedEditId === null) return;
   if (!confirm('Delete this fixed cost?')) return;
-  FIXED_COSTS = FIXED_COSTS.filter(c=>c.id!==fixedEditId);
+  const deletedId = fixedEditId;
+  FIXED_COSTS = FIXED_COSTS.filter(c=>c.id!==deletedId);
+  supa.from('fixed_costs').delete().eq('id', deletedId)
+    .then(({error}) => { if(error) console.error('FC delete error:',error); });
   closeEditFixed();
   refreshFixedDetail();
 }
@@ -2329,12 +2486,20 @@ function submitTransaction() {
     pt: totP
   };
 
+  // Save to Supabase
+  const toInsert = {date:dateFormatted, name:merchant, cat:selectedCat,
+    type:selectedType, val:amount, p:curP||null, pt:totP||null};
+
+  supa.from('transactions').insert([toInsert]).then(({data, error}) => {
+    if (error) console.error('Save error:', error);
+    else if (data && data[0]) tx.id = data[0].id;
+  });
+
   TRANSACTIONS.unshift(tx);
   buildStatement(TRANSACTIONS);
   buildDonut();
   closeAddModal();
 
-  // flash success
   const fab = document.getElementById('fab');
   fab.style.background = 'linear-gradient(135deg,var(--green),#2db87a)';
   fab.textContent = '✓';
