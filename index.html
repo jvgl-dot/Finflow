@@ -1361,7 +1361,7 @@ function buildStatement(txList) {
         </div>
         <div class="tx-right">
           <div class="tx-amount" style="color:${t.val<0?'var(--green)':t.val>200?'var(--red)':'var(--text)'}">${fmt(t.val)}</div>
-          ${t.p ? `<div class="tx-installment${isLast?' tx-last':''}">${t.p}/${t.pt}${isLast?' · last!':''}</div>` : ''}
+          ${t.p ? `<div class="tx-installment${isLast?' tx-last':''}">${t.p}/${t.pt}${isLast?' · last one!':''}</div>` : ''}
         </div>
       `;
       wrap.appendChild(el);
@@ -1612,7 +1612,7 @@ function buildInstallments() {
     const isSoon = rem === 1;
 
     const card = document.createElement('div');
-    card.style.cssText = `background:#111118;border:1.5px solid ${isLast?'#3ecf8e44':isSoon?'#f5c84244':'#3a3a52'};border-radius:14px;padding:14px;`;
+    card.style.cssText = `background:#111118;border:1.5px solid ${isLast?'#f5c84244':isSoon?'#f5c84244':'#3a3a52'};border-radius:14px;padding:14px;`;
 
     // top row
     const top = document.createElement('div');
@@ -1633,8 +1633,8 @@ function buildInstallments() {
     monthly.style.cssText = "font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:#f0f0f5";
     monthly.textContent = fmt(inst.monthly) + '/mo';
     const remaining = document.createElement('div');
-    remaining.style.cssText = `font-family:'DM Mono',monospace;font-size:10px;color:${isLast?'#3ecf8e':isSoon?'#f5c842':'#6b6b80'}`;
-    remaining.textContent = isLast ? 'Done ✓' : rem + ' left · ' + fmt(rem * inst.monthly);
+    remaining.style.cssText = `font-family:'DM Mono',monospace;font-size:10px;color:${isLast?'#f5c842':isSoon?'#f5c842':'#6b6b80'}`;
+    remaining.textContent = isLast ? '🎯 Last one!' : rem + ' left · ' + fmt(rem * inst.monthly);
     right.appendChild(monthly); right.appendChild(remaining);
 
     top.appendChild(left); top.appendChild(right);
@@ -1812,7 +1812,7 @@ function openDetail(cat) {
       </div>
       <div class="tx-right">
         <div class="tx-amount">${fmt(t.val)}</div>
-        ${t.p ? `<div class="tx-installment${isLast?' tx-last':''}">${t.p}/${t.pt}${isLast?' · last!':''}</div>` : ''}
+        ${t.p ? `<div class="tx-installment${isLast?' tx-last':''}">${t.p}/${t.pt}${isLast?' · last one!':''}</div>` : ''}
       </div>
     `;
     card.appendChild(el);
