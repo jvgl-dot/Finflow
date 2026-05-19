@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -45,35 +44,35 @@
   --safe-top:    env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 
-/* category colors */
-–c-food:        #3ecf8e;
-–c-home:        #7c6af7;
-–c-sports:      #f5c842;
-–c-transport:   #38bdf8;
-–c-shopping:    #f26b6b;
-–c-pet:         #fb923c;
-–c-streaming:   #a78bfa;
-–c-car:         #64748b;
-–c-health:      #34d399;
-–c-supermarket: #4ade80;
-–c-book:        #818cf8;
-–c-other:       #94a3b8;
-–c-entertainment:#e879f9;
-–c-fashion:     #f472b6;
-–c-fuel:        #fbbf24;
-–c-online:      #60a5fa;
-–c-subscription:#c084fc;
+  /* category colors */
+  --c-food:        #3ecf8e;
+  --c-home:        #7c6af7;
+  --c-sports:      #f5c842;
+  --c-transport:   #38bdf8;
+  --c-shopping:    #f26b6b;
+  --c-pet:         #fb923c;
+  --c-streaming:   #a78bfa;
+  --c-car:         #64748b;
+  --c-health:      #34d399;
+  --c-supermarket: #4ade80;
+  --c-book:        #818cf8;
+  --c-other:       #94a3b8;
+  --c-entertainment:#e879f9;
+  --c-fashion:     #f472b6;
+  --c-fuel:        #fbbf24;
+  --c-online:      #60a5fa;
+  --c-subscription:#c084fc;
 }
 
-- { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html {
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html {
   height: 100%;
   background: #0a0a0f;
-  }
-  body {
-  font-family: ‘Nunito’, sans-serif;
+}
+body {
+  font-family: 'Nunito', sans-serif;
   background: #0a0a0f;
-  color: var(–text);
+  color: var(--text);
   height: 100%;
   overflow: hidden;
   position: fixed;
@@ -81,564 +80,564 @@
   display: flex;
   justify-content: center;
   align-items: stretch;
-  }
+}
 
 /* ── LAYOUT ─────────────────────────────────────────── */
 #app {
-display: flex;
-flex-direction: column;
-height: 100%;
-width: 100%;
-max-width: 480px;
-position: relative;
-background: var(–bg);
-padding-top: var(–safe-top);
-padding-bottom: var(–safe-bottom);
-box-shadow: 0 0 80px #00000088;
-overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  max-width: 480px;
+  position: relative;
+  background: var(--bg);
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
+  box-shadow: 0 0 80px #00000088;
+  overflow: hidden;
 }
 
 /* ── HEADER ─────────────────────────────────────────── */
 .header {
-display: flex;
-align-items: center;
-justify-content: space-between;
-padding: 16px 20px 12px;
-flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 12px;
+  flex-shrink: 0;
 }
 .header-logo {
-font-size: 20px;
-font-weight: 800;
-letter-spacing: -0.5px;
-background: linear-gradient(135deg, #a594ff, #3ecf8e);
--webkit-background-clip: text;
-background-clip: text;
--webkit-text-fill-color: transparent;
-color: transparent;
-display: inline-block;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #a594ff, #3ecf8e);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  display: inline-block;
 }
 .header-month {
-font-family: ‘DM Mono’, monospace;
-font-size: 12px;
-color: var(–muted2);
-background: var(–bg3);
-border: 1px solid var(–border2);
-padding: 5px 12px;
-border-radius: 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--muted2);
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  padding: 5px 12px;
+  border-radius: 20px;
 }
 
 /* ── PAGES ───────────────────────────────────────────── */
 .pages {
-flex: 1;
-overflow: hidden;
-position: relative;
-isolation: isolate;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  isolation: isolate;
 }
 .page {
-position: absolute;
-inset: 0;
-overflow-y: auto;
-overflow-x: hidden;
-padding: 4px 16px 20px;
-opacity: 0;
-pointer-events: none;
-transform: translateX(30px);
-transition: opacity .25s ease, transform .25s ease;
--webkit-overflow-scrolling: touch;
-scrollbar-width: none;
--ms-overflow-style: none;
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 4px 16px 20px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(30px);
+  transition: opacity .25s ease, transform .25s ease;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 .page::-webkit-scrollbar { display: none; }
 .page.active {
-opacity: 1;
-pointer-events: all;
-transform: translateX(0);
+  opacity: 1;
+  pointer-events: all;
+  transform: translateX(0);
 }
 .page.slide-from-right { transform: translateX(60px); }
 .detail-page {
-position: fixed;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-overflow-y: auto;
-background: #0a0a0f;
-z-index: 999;
-padding: env(safe-area-inset-top, 20px) 16px calc(env(safe-area-inset-bottom, 0px) + 80px);
--webkit-overflow-scrolling: touch;
-scrollbar-width: none;
--ms-overflow-style: none;
-visibility: hidden;
-opacity: 0;
-transform: translateX(100%);
-transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-opacity 0.3s ease,
-visibility 0s linear 0.3s;
-will-change: transform;
--webkit-backface-visibility: hidden;
-backface-visibility: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: auto;
+  background: #0a0a0f;
+  z-index: 999;
+  padding: env(safe-area-inset-top, 20px) 16px calc(env(safe-area-inset-bottom, 0px) + 80px);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.3s ease,
+              visibility 0s linear 0.3s;
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 .detail-page.open {
-visibility: visible;
-opacity: 1;
-transform: translateX(0);
-transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-opacity 0.3s ease,
-visibility 0s linear 0s;
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(0);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.3s ease,
+              visibility 0s linear 0s;
 }
 
 /* ── NAV ─────────────────────────────────────────────── */
 .nav {
-display: flex;
-background: var(–bg2);
-border-top: 1px solid var(–border);
-flex-shrink: 0;
-padding-bottom: calc(var(–safe-bottom) - 4px);
+  display: flex;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  padding-bottom: calc(var(--safe-bottom) - 4px);
 }
 .nav-item {
-flex: 1;
-display: flex;
-flex-direction: column;
-align-items: center;
-gap: 3px;
-padding: 10px 4px 8px;
-cursor: pointer;
-transition: all .2s;
-border: none;
-background: none;
-color: var(–muted);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 10px 4px 8px;
+  cursor: pointer;
+  transition: all .2s;
+  border: none;
+  background: none;
+  color: var(--muted);
 }
-.nav-item.active { color: var(–accent2); }
+.nav-item.active { color: var(--accent2); }
 .nav-item svg { width: 22px; height: 22px; }
 .nav-label { font-size: 9px; font-weight: 600; letter-spacing: .5px; text-transform: uppercase; }
 
 /* ── CARDS ───────────────────────────────────────────── */
 .card {
-background: #111118;
-border: 1.5px solid #3a3a52;
-border-radius: var(–radius);
-padding: 16px;
-margin-bottom: 12px;
-box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  background: #111118;
+  border: 1.5px solid #3a3a52;
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
 }
 .card-sm {
-background: #1a1a24;
-border: 1.5px solid #3a3a52;
-border-radius: var(–radius-sm);
-padding: 14px;
+  background: #1a1a24;
+  border: 1.5px solid #3a3a52;
+  border-radius: var(--radius-sm);
+  padding: 14px;
 }
 
 /* ── KPI ROW ─────────────────────────────────────────── */
 .kpi-row {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 10px;
-margin-bottom: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 .kpi-wide { grid-column: 1/-1; }
 .kpi {
-background: #111118;
-border: 1.5px solid #3a3a52;
-border-radius: var(–radius);
-padding: 16px;
-box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  background: #111118;
+  border: 1.5px solid #3a3a52;
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
 }
 .kpi-label {
-font-family: ‘DM Mono’, monospace;
-font-size: 10px;
-color: var(–muted);
-text-transform: uppercase;
-letter-spacing: .8px;
-margin-bottom: 6px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  margin-bottom: 6px;
 }
 .kpi-value {
-font-size: 20px;
-font-weight: 800;
-letter-spacing: -0.5px;
-line-height: 1.1;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
 }
 .kpi-sub {
-font-family: ‘DM Mono’, monospace;
-font-size: 9px;
-color: var(–muted2);
-margin-top: 4px;
-white-space: nowrap;
-overflow: hidden;
-text-overflow: ellipsis;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--muted2);
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.kpi-positive { color: var(–green); }
-.kpi-negative { color: var(–red); }
-.kpi-accent   { color: var(–accent2); }
-.kpi-yellow   { color: var(–yellow); }
+.kpi-positive { color: var(--green); }
+.kpi-negative { color: var(--red); }
+.kpi-accent   { color: var(--accent2); }
+.kpi-yellow   { color: var(--yellow); }
 
 /* ── SECTION TITLE ───────────────────────────────────── */
 .section-title {
-font-size: 11px;
-font-weight: 700;
-color: var(–muted);
-text-transform: uppercase;
-letter-spacing: 1.2px;
-margin: 20px 0 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin: 20px 0 10px;
 }
 
 /* ── DONUT CHART ─────────────────────────────────────── */
 .chart-wrap {
-display: flex;
-align-items: center;
-gap: 16px;
-padding: 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 4px 0;
 }
 #donut { flex-shrink: 0; cursor: pointer; }
 .legend { flex: 1; display: flex; flex-direction: column; gap: 7px; }
 .legend-item {
-display: flex;
-align-items: center;
-gap: 8px;
-cursor: pointer;
-transition: opacity .15s;
-padding: 2px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: opacity .15s;
+  padding: 2px 0;
 }
 .legend-item:active { opacity: .6; }
 .legend-dot {
-width: 10px; height: 10px;
-border-radius: 50%;
-flex-shrink: 0;
-display: inline-block;
--webkit-print-color-adjust: exact;
-print-color-adjust: exact;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-block;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
 .legend-name { font-size: 12px; font-weight: 600; flex: 1; }
 .legend-pct {
-font-family: ‘DM Mono’, monospace;
-font-size: 10px;
-color: var(–muted2);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted2);
 }
 .legend-val {
-font-family: ‘DM Mono’, monospace;
-font-size: 11px;
-font-weight: 500;
-color: var(–text);
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text);
 }
 
 /* ── TRANSACTION LIST ────────────────────────────────── */
 .tx-list { display: flex; flex-direction: column; gap: 0; }
 .tx-group-date {
-font-family: ‘DM Mono’, monospace;
-font-size: 10px;
-color: var(–muted);
-text-transform: uppercase;
-letter-spacing: .8px;
-padding: 14px 0 6px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  padding: 14px 0 6px;
 }
 .tx-item {
-display: flex;
-align-items: center;
-gap: 12px;
-padding: 11px 0;
-border-bottom: 1px solid var(–border);
-cursor: pointer;
-transition: background .15s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background .15s;
 }
 .tx-item:last-child { border-bottom: none; }
 .tx-dot {
-width: 34px; height: 34px;
-border-radius: 10px;
-display: flex; align-items: center; justify-content: center;
-font-size: 14px;
-flex-shrink: 0;
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
 }
 .tx-info { flex: 1; min-width: 0; }
 .tx-name {
-font-size: 13px;
-font-weight: 600;
-white-space: nowrap;
-overflow: hidden;
-text-overflow: ellipsis;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .tx-meta {
-font-family: ‘DM Mono’, monospace;
-font-size: 10px;
-color: var(–muted2);
-margin-top: 2px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted2);
+  margin-top: 2px;
 }
 .tx-right { text-align: right; flex-shrink: 0; }
 .tx-amount {
-font-family: ‘DM Mono’, monospace;
-font-size: 13px;
-font-weight: 500;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
 }
 .tx-installment {
-font-family: ‘DM Mono’, monospace;
-font-size: 10px;
-color: var(–muted2);
-margin-top: 2px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted2);
+  margin-top: 2px;
 }
-.tx-last { color: var(–red) !important; }
+.tx-last { color: var(--red) !important; }
 
 /* ── INSTALLMENT TABLE ───────────────────────────────── */
 .inst-item {
-display: flex;
-align-items: center;
-gap: 12px;
-padding: 13px 0;
-border-bottom: 1px solid var(–border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border);
 }
 .inst-item:last-child { border-bottom: none; }
 .inst-dot {
-width: 36px; height: 36px;
-border-radius: 10px;
-display: flex; align-items: center; justify-content: center;
-font-size: 13px;
-flex-shrink: 0;
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
 }
 .inst-info { flex: 1; min-width: 0; }
 .inst-name { font-size: 13px; font-weight: 600; }
 .inst-desc {
-font-family: ‘DM Mono’, monospace;
-font-size: 10px;
-color: var(–muted2);
-margin-top: 2px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted2);
+  margin-top: 2px;
 }
 .inst-progress {
-height: 3px;
-background: var(–bg3);
-border-radius: 99px;
-margin-top: 6px;
-overflow: hidden;
+  height: 3px;
+  background: var(--bg3);
+  border-radius: 99px;
+  margin-top: 6px;
+  overflow: hidden;
 }
 .inst-progress-fill {
-height: 100%;
-border-radius: 99px;
-background: var(–accent);
-transition: width .4s ease;
+  height: 100%;
+  border-radius: 99px;
+  background: var(--accent);
+  transition: width .4s ease;
 }
 .inst-right { text-align: right; flex-shrink: 0; }
 .inst-monthly {
-font-family: ‘DM Mono’, monospace;
-font-size: 13px;
-font-weight: 500;
-color: var(–text);
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
 }
 .inst-remaining {
-font-family: ‘DM Mono’, monospace;
-font-size: 10px;
-color: var(–muted2);
-margin-top: 2px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted2);
+  margin-top: 2px;
 }
 .badge {
-display: inline-block;
-font-family: ‘DM Mono’, monospace;
-font-size: 9px;
-font-weight: 500;
-padding: 2px 7px;
-border-radius: 99px;
-margin-left: 6px;
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: 99px;
+  margin-left: 6px;
 }
-.badge-last { background: #f26b6b22; color: var(–red); }
-.badge-soon { background: #f5c84222; color: var(–yellow); }
+.badge-last { background: #f26b6b22; color: var(--red); }
+.badge-soon { background: #f5c84222; color: var(--yellow); }
 
 /* ── CASH FLOW ───────────────────────────────────────── */
 .cf-row {
-display: flex;
-align-items: center;
-justify-content: space-between;
-padding: 11px 0;
-border-bottom: 1px solid var(–border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border);
 }
 .cf-row:last-child { border-bottom: none; }
 .cf-label { font-size: 13px; font-weight: 600; }
 .cf-sub {
-font-family: ‘DM Mono’, monospace;
-font-size: 10px;
-color: var(–muted2);
-margin-top: 2px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted2);
+  margin-top: 2px;
 }
 .cf-amount {
-font-family: ‘DM Mono’, monospace;
-font-size: 14px;
-font-weight: 500;
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 /* ── DETAIL PAGE ─────────────────────────────────────── */
 .detail-header {
-display: flex;
-align-items: center;
-gap: 12px;
-padding: 20px 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 0 16px;
 }
 .back-btn {
-width: 36px; height: 36px;
-border-radius: 10px;
-background: var(–bg3);
-border: 1px solid var(–border2);
-display: flex; align-items: center; justify-content: center;
-cursor: pointer;
-flex-shrink: 0;
-color: var(–text);
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  color: var(--text);
 }
 .detail-title { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
 .detail-cat-dot {
-width: 10px; height: 10px;
-border-radius: 50%;
-margin-left: auto;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  margin-left: auto;
 }
 
 /* ── UPLOAD AREA ─────────────────────────────────────── */
 .upload-zone {
-border: 2px dashed var(–border2);
-border-radius: var(–radius);
-padding: 28px 20px;
-text-align: center;
-cursor: pointer;
-transition: border-color .2s, background .2s;
+  border: 2px dashed var(--border2);
+  border-radius: var(--radius);
+  padding: 28px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
 }
-.upload-zone:hover, .upload-zone.drag { border-color: var(–accent); background: #7c6af708; }
+.upload-zone:hover, .upload-zone.drag { border-color: var(--accent); background: #7c6af708; }
 .upload-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-.upload-sub { font-family: ‘DM Mono’, monospace; font-size: 11px; color: var(–muted2); }
+.upload-sub { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted2); }
 
 /* ── MONTH TIMELINE ──────────────────────────────────── */
 .timeline { display: flex; flex-direction: column; gap: 10px; }
 .timeline-month {
-background: var(–bg2);
-border: 1px solid var(–border);
-border-radius: var(–radius);
-overflow: hidden;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
 }
 .timeline-month-header {
-display: flex;
-align-items: center;
-justify-content: space-between;
-padding: 14px 16px;
-cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  cursor: pointer;
 }
 .timeline-month-name { font-size: 14px; font-weight: 700; }
 .timeline-month-total {
-font-family: ‘DM Mono’, monospace;
-font-size: 13px;
-color: var(–muted2);
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--muted2);
 }
 .timeline-month-body {
-padding: 0 16px 14px;
-border-top: 1px solid var(–border);
-display: none;
+  padding: 0 16px 14px;
+  border-top: 1px solid var(--border);
+  display: none;
 }
 .timeline-month-body.open { display: block; }
 .timeline-inst-row {
-display: flex;
-justify-content: space-between;
-align-items: center;
-padding: 7px 0;
-border-bottom: 1px solid var(–border);
-font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
 }
 .timeline-inst-row:last-child { border-bottom: none; }
 
 /* ── SCROLLBAR ───────────────────────────────────────── */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(–border2); border-radius: 99px; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
 
 /* ── UTILS ───────────────────────────────────────────── */
 .flex-between { display: flex; align-items: center; justify-content: space-between; }
-.text-muted { color: var(–muted2); }
-.text-mono { font-family: ‘DM Mono’, monospace; }
+.text-muted { color: var(--muted2); }
+.text-mono { font-family: 'DM Mono', monospace; }
 .mt4 { margin-top: 4px; }
 .mb12 { margin-bottom: 12px; }
-.divider { height: 1px; background: var(–border); margin: 12px 0; }
+.divider { height: 1px; background: var(--border); margin: 12px 0; }
 .tag {
-display: inline-block;
-font-family: ‘DM Mono’, monospace;
-font-size: 9px;
-padding: 2px 8px;
-border-radius: 99px;
-background: var(–bg3);
-color: var(–muted2);
-border: 1px solid var(–border2);
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: var(--bg3);
+  color: var(--muted2);
+  border: 1px solid var(--border2);
 }
 
 /* ── ADD TRANSACTION UI ──────────────────────────────── */
 @keyframes spin { to { transform: rotate(360deg); } }
 .scan-spinner {
-width: 32px; height: 32px;
-border: 3px solid #ffffff22;
-border-top-color: var(–accent2);
-border-radius: 50%;
-animation: spin .8s linear infinite;
+  width: 32px; height: 32px;
+  border: 3px solid #ffffff22;
+  border-top-color: var(--accent2);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
 }
 .photo-btn {
-background: var(–bg3);
-border: 1px solid var(–border2);
-border-radius: 14px;
-padding: 16px;
-display: flex; flex-direction: column;
-align-items: center; gap: 6px;
-cursor: pointer; transition: border-color .2s;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 6px;
+  cursor: pointer; transition: border-color .2s;
 }
-.photo-btn:active { border-color: var(–accent); background: #7c6af710; }
+.photo-btn:active { border-color: var(--accent); background: #7c6af710; }
 .f-label {
-font-size: 11px; color: var(–muted);
-font-family: ‘DM Mono’, monospace;
-text-transform: uppercase; letter-spacing: .8px;
-margin-bottom: 6px;
+  font-size: 11px; color: var(--muted);
+  font-family: 'DM Mono', monospace;
+  text-transform: uppercase; letter-spacing: .8px;
+  margin-bottom: 6px;
 }
 .f-input {
-width: 100%;
-background: var(–bg3);
-border: 1px solid var(–border2);
-border-radius: 12px;
-padding: 12px 14px;
-color: var(–text);
-font-family: ‘Nunito’, sans-serif;
-font-size: 14px; font-weight: 600;
-outline: none;
-transition: border-color .2s;
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px; font-weight: 600;
+  outline: none;
+  transition: border-color .2s;
 }
-.f-input:focus { border-color: var(–accent); }
+.f-input:focus { border-color: var(--accent); }
 .cat-chip {
-padding: 6px 12px;
-border-radius: 99px;
-font-size: 11px; font-weight: 700;
-border: 1.5px solid transparent;
-cursor: pointer;
-transition: all .15s;
-display: flex; align-items: center; gap: 4px;
-white-space: nowrap;
+  padding: 6px 12px;
+  border-radius: 99px;
+  font-size: 11px; font-weight: 700;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: all .15s;
+  display: flex; align-items: center; gap: 4px;
+  white-space: nowrap;
 }
 .cat-chip.selected { border-color: currentColor; background: transparent; }
 .type-btn {
-background: var(–bg3);
-border: 1.5px solid var(–border2);
-border-radius: 12px;
-padding: 10px 8px;
-font-size: 12px; font-weight: 700;
-text-align: center; cursor: pointer;
-transition: all .15s;
+  background: var(--bg3);
+  border: 1.5px solid var(--border2);
+  border-radius: 12px;
+  padding: 10px 8px;
+  font-size: 12px; font-weight: 700;
+  text-align: center; cursor: pointer;
+  transition: all .15s;
 }
 .type-btn.active-type {
-border-color: var(–accent);
-background: #7c6af718;
-color: var(–accent2);
+  border-color: var(--accent);
+  background: #7c6af718;
+  color: var(--accent2);
 }
 .submit-btn {
-width: 100%; padding: 16px;
-background: var(–accent); border: none;
-border-radius: 14px; color: #fff;
-font-family: ‘Nunito’, sans-serif;
-font-size: 15px; font-weight: 800;
-cursor: pointer; margin-top: 4px;
-transition: opacity .15s; letter-spacing: .2px;
+  width: 100%; padding: 16px;
+  background: var(--accent); border: none;
+  border-radius: 14px; color: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px; font-weight: 800;
+  cursor: pointer; margin-top: 4px;
+  transition: opacity .15s; letter-spacing: .2px;
 }
 .submit-btn:active { opacity: .8; }
 
 /* clickable KPI tiles */
 .kpi-clickable {
-cursor: pointer;
-transition: border-color .2s, background .2s;
--webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  -webkit-tap-highlight-color: transparent;
 }
 .kpi-clickable:active {
-border-color: var(–accent);
-background: #7c6af710;
+  border-color: var(--accent);
+  background: #7c6af710;
 }
 
 </style>
@@ -652,131 +651,128 @@ background: #7c6af710;
   </div>
 
   <!-- PAGES -->
-
   <div class="pages">
 
-```
-<!-- ── DASHBOARD ── -->
-<div class="page active" id="page-dashboard">
-  <div class="kpi-row">
-    <div class="kpi kpi-clickable kpi-wide" onclick="openKpiDetail('card')">
-      <div class="kpi-label">Credit Card ›</div>
-      <div class="kpi-value kpi-negative" id="kpi-card">R$ 4.428</div>
-      <div class="kpi-sub">27% of salary · due 7th</div>
+    <!-- ── DASHBOARD ── -->
+    <div class="page active" id="page-dashboard">
+      <div class="kpi-row">
+        <div class="kpi kpi-clickable kpi-wide" onclick="openKpiDetail('card')">
+          <div class="kpi-label">Credit Card ›</div>
+          <div class="kpi-value kpi-negative" id="kpi-card">R$ 7,234</div>
+          <div class="kpi-sub">45% of salary · due 7th</div>
+        </div>
+        <div class="kpi kpi-clickable kpi-wide" onclick="openKpiDetail('fixed')">
+          <div class="kpi-label">Fixed Costs ›</div>
+          <div class="kpi-value kpi-negative" id="kpi-fixed">R$ 7,137</div>
+          <div class="kpi-sub">Rent · fuel · pet · sports</div>
+        </div>
+      </div>
+
+      <div class="section-title">Spending by Category</div>
+      <div class="card">
+        <div class="chart-wrap">
+          <canvas id="donut" width="260" height="260" style="width:130px;height:130px;flex-shrink:0;cursor:pointer;"></canvas>
+          <div class="legend" id="legend"></div>
+        </div>
+      </div>
     </div>
-    <div class="kpi kpi-clickable kpi-wide" onclick="openKpiDetail('fixed')">
-      <div class="kpi-label">Fixed Costs ›</div>
-      <div class="kpi-value kpi-negative" id="kpi-fixed">R$ 7,137</div>
-      <div class="kpi-sub">Rent · fuel · pet · sports</div>
+
+    <!-- ── STATEMENT ── -->
+    <div class="page" id="page-statement">
+      <div class="section-title">May Statement · <span id="stmt-total" style="color:var(--red)"></span></div>
+
+      <div class="upload-zone" id="upload-zone" onclick="document.getElementById('csv-input').click()">
+        <div style="font-size:24px;margin-bottom:8px">📂</div>
+        <div class="upload-title">Import CSV</div>
+        <div class="upload-sub">Tap to upload your bank export</div>
+      </div>
+      <input type="file" id="csv-input" accept=".csv" style="display:none" onchange="handleCSV(this)">
+
+      <div id="tx-list-wrap"></div>
     </div>
-  </div>
 
-  <div class="section-title">Spending by Category</div>
-  <div class="card">
-    <div class="chart-wrap">
-      <canvas id="donut" width="260" height="260" style="width:130px;height:130px;flex-shrink:0;cursor:pointer;"></canvas>
-      <div class="legend" id="legend"></div>
+    <!-- ── INSTALLMENTS ── -->
+    <div class="page" id="page-installments">
+
+      <!-- KPI strip -->
+      <div id="inst-kpi-strip" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;padding-top:4px"></div>
+
+      <!-- Horizontal scrollable month chart -->
+      <div class="section-title">Monthly Commitment</div>
+      <div style="position:relative;margin-bottom:4px">
+        <div id="inst-chart-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:8px">
+          <canvas id="inst-chart" height="160" style="display:block"></canvas>
+        </div>
+        <!-- Fade edges -->
+        <div style="position:absolute;top:0;right:0;width:32px;height:100%;background:linear-gradient(to left,#0a0a0f,transparent);pointer-events:none"></div>
+      </div>
+      <div id="inst-chart-legend" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px"></div>
+
+      <!-- Selected month detail (shown when bar tapped) -->
+      <div id="inst-month-detail" style="display:none;margin-bottom:12px"></div>
+
+      <!-- All plans list -->
+      <div class="section-title" style="margin-top:4px">All Plans</div>
+      <div id="inst-list" style="display:flex;flex-direction:column;gap:8px"></div>
+
     </div>
-  </div>
-</div>
 
-<!-- ── STATEMENT ── -->
-<div class="page" id="page-statement">
-  <div class="section-title">May Statement · <span id="stmt-total" style="color:var(--red)"></span></div>
+    <!-- ── CASH FLOW ── -->
+    <div class="page" id="page-cashflow">
+      <div class="section-title">Monthly Cash Flow</div>
+      <div class="card">
+        <div class="cf-row">
+          <div><div class="cf-label" style="color:var(--green)">↑ Salary</div><div class="cf-sub">7th business day</div></div>
+          <div class="cf-amount" style="color:var(--green)">+R$ 16,195</div>
+        </div>
+      </div>
 
-  <div class="upload-zone" id="upload-zone" onclick="document.getElementById('csv-input').click()">
-    <div style="font-size:24px;margin-bottom:8px">📂</div>
-    <div class="upload-title">Import CSV</div>
-    <div class="upload-sub">Tap to upload your bank export</div>
-  </div>
-  <input type="file" id="csv-input" accept=".csv" style="display:none" onchange="handleCSV(this)">
+      <div class="section-title">Fixed Expenses</div>
+      <div class="card" style="padding:0 16px" id="cf-fixed-list"></div>
 
-  <div id="tx-list-wrap"></div>
-</div>
+      <div class="section-title">Credit Card (estimated)</div>
+      <div class="card" id="cf-card-card">
+        <div class="cf-row">
+          <div><div class="cf-label">Credit Card</div><div class="cf-sub">Due 7th · installments + current spending</div></div>
+          <div class="cf-amount" style="color:var(--red)">−R$ 8,652</div>
+        </div>
+      </div>
 
-<!-- ── INSTALLMENTS ── -->
-<div class="page" id="page-installments">
+      <div class="section-title">Balance</div>
+      <div class="card" style="background: linear-gradient(135deg,#1a1a24,#111118)">
+        <div class="cf-row">
+          <div><div class="cf-label">Total Out</div></div>
+          <div class="cf-amount" style="color:var(--red)">−R$ 15,565</div>
+        </div>
+        <div class="divider"></div>
+        <div class="cf-row">
+          <div><div class="cf-label" style="font-size:15px">Free Balance</div></div>
+          <div class="cf-amount" style="font-size:20px;color:var(--red)">+R$ 630</div>
+        </div>
+        <div style="margin-top:10px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted2)">
+          💡 Available to invest = Income − Fixed Costs − Credit Card. Does not deduct investment (that is your choice).
+        </div>
+      </div>
 
-  <!-- KPI strip -->
-  <div id="inst-kpi-strip" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;padding-top:4px"></div>
+      <div class="section-title">Monthly Projection Jul–Dec</div>
+      <div id="cf-projection"></div>
 
-  <!-- Horizontal scrollable month chart -->
-  <div class="section-title">Monthly Commitment</div>
-  <div style="position:relative;margin-bottom:4px">
-    <div id="inst-chart-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:8px">
-      <canvas id="inst-chart" height="160" style="display:block"></canvas>
+      <div class="section-title" style="margin-top:8px">Upcoming Card Forecast</div>
+      <div class="timeline" id="forecast-timeline"></div>
     </div>
-    <!-- Fade edges -->
-    <div style="position:absolute;top:0;right:0;width:32px;height:100%;background:linear-gradient(to left,#0a0a0f,transparent);pointer-events:none"></div>
-  </div>
-  <div id="inst-chart-legend" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px"></div>
 
-  <!-- Selected month detail (shown when bar tapped) -->
-  <div id="inst-month-detail" style="display:none;margin-bottom:12px"></div>
-
-  <!-- All plans list -->
-  <div class="section-title" style="margin-top:4px">All Plans</div>
-  <div id="inst-list" style="display:flex;flex-direction:column;gap:8px"></div>
-
-</div>
-
-<!-- ── CASH FLOW ── -->
-<div class="page" id="page-cashflow">
-  <div class="section-title">Monthly Cash Flow</div>
-  <div class="card">
-    <div class="cf-row">
-      <div><div class="cf-label" style="color:var(--green)">↑ Salary</div><div class="cf-sub">7th business day</div></div>
-      <div class="cf-amount" style="color:var(--green)">+R$ 16,195</div>
+    <!-- ── INVESTMENTS ── -->
+    <div class="page" id="page-investments">
+      <div class="section-title">Portfolio Overview</div>
+      <div class="card" id="invest-summary-cards" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
+      <div class="section-title">Holdings</div>
+      <div class="card" style="padding:0 16px" id="invest-list"></div>
     </div>
-  </div>
-
-  <div class="section-title">Fixed Expenses</div>
-  <div class="card" style="padding:0 16px" id="cf-fixed-list"></div>
-
-  <div class="section-title">Credit Card (estimated)</div>
-  <div class="card" id="cf-card-card">
-    <div class="cf-row">
-      <div><div class="cf-label">Credit Card</div><div class="cf-sub">Due 7th · installments + current spending</div></div>
-      <div class="cf-amount" style="color:var(--red)">−R$ 8,652</div>
-    </div>
-  </div>
-
-  <div class="section-title">Balance</div>
-  <div class="card" style="background: linear-gradient(135deg,#1a1a24,#111118)">
-    <div class="cf-row">
-      <div><div class="cf-label">Total Out</div></div>
-      <div class="cf-amount" style="color:var(--red)">−R$ 15,565</div>
-    </div>
-    <div class="divider"></div>
-    <div class="cf-row">
-      <div><div class="cf-label" style="font-size:15px">Free Balance</div></div>
-      <div class="cf-amount" style="font-size:20px;color:var(--red)">+R$ 630</div>
-    </div>
-    <div style="margin-top:10px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted2)">
-      💡 Available to invest = Income − Fixed Costs − Credit Card. Does not deduct investment (that is your choice).
-    </div>
-  </div>
-
-  <div class="section-title">Monthly Projection Jul–Dec</div>
-  <div id="cf-projection"></div>
-
-  <div class="section-title" style="margin-top:8px">Upcoming Card Forecast</div>
-  <div class="timeline" id="forecast-timeline"></div>
-</div>
-
-<!-- ── INVESTMENTS ── -->
-<div class="page" id="page-investments">
-  <div class="section-title">Portfolio Overview</div>
-  <div class="card" id="invest-summary-cards" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
-  <div class="section-title">Holdings</div>
-  <div class="card" style="padding:0 16px" id="invest-list"></div>
-</div>
-```
 
   </div><!-- /pages -->
 
-  <!-- EDIT FIXED COST MODAL -->
 
+  <!-- EDIT FIXED COST MODAL -->
   <div id="edit-fixed-overlay" style="position:fixed;inset:0;background:#000000cc;z-index:200;opacity:0;pointer-events:none;transition:opacity .25s;" onclick="closeEditFixed()"></div>
   <div id="edit-fixed-modal" style="
     position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);
@@ -813,8 +809,9 @@ background: #7c6af710;
     </div>
   </div>
 
-  <!-- ── ADD TRANSACTION MODAL ── -->
 
+
+  <!-- ── ADD TRANSACTION MODAL ── -->
   <div id="add-overlay" style="
     position:fixed;inset:0;background:#000000cc;z-index:100;
     opacity:0;pointer-events:none;transition:opacity .25s;
@@ -917,7 +914,6 @@ background: #7c6af710;
   </div>
 
   <!-- API KEY SETUP -->
-
   <div id="apikey-overlay" style="position:fixed;inset:0;background:#000000ee;z-index:200;display:none;align-items:flex-end;justify-content:center;padding:0;">
     <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:24px;width:100%;max-width:380px">
       <div style="font-size:18px;font-weight:800;margin-bottom:6px">🔑 Anthropic API Key</div>
@@ -932,19 +928,17 @@ background: #7c6af710;
   </div>
 
   <!-- FAB (inside app for proper positioning) -->
-
-<button id="fab" onclick="openAddModal()" style="
-position:absolute;right:20px;bottom:80px;
-width:56px;height:56px;border-radius:50%;
-background:linear-gradient(135deg,var(--accent),var(--accent2));
-border:none;color:#fff;font-size:28px;font-weight:300;
-box-shadow:0 4px 24px #7c6af766;cursor:pointer;z-index:90;
-display:flex;align-items:center;justify-content:center;
-transition:transform .15s,box-shadow .15s;line-height:1;
-">+</button>
+  <button id="fab" onclick="openAddModal()" style="
+    position:absolute;right:20px;bottom:80px;
+    width:56px;height:56px;border-radius:50%;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    border:none;color:#fff;font-size:28px;font-weight:300;
+    box-shadow:0 4px 24px #7c6af766;cursor:pointer;z-index:90;
+    display:flex;align-items:center;justify-content:center;
+    transition:transform .15s,box-shadow .15s;line-height:1;
+  ">+</button>
 
   <!-- KPI DETAIL PAGE -->
-
   <div class="detail-page" id="kpi-detail-page">
     <div class="detail-header" style="padding:20px 0 12px">
       <div class="back-btn" onclick="closeKpiDetail()">
@@ -960,7 +954,6 @@ transition:transform .15s,box-shadow .15s;line-height:1;
   </div>
 
   <!-- CATEGORY DETAIL PAGE -->
-
   <div class="detail-page" id="detail-page">
     <div class="detail-header">
       <div class="back-btn" onclick="closeDetail()">
@@ -976,7 +969,6 @@ transition:transform .15s,box-shadow .15s;line-height:1;
   </div>
 
   <!-- NAV -->
-
   <nav class="nav">
     <button class="nav-item active" onclick="showPage('dashboard',this)">
       <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
@@ -1108,6 +1100,12 @@ const CAT_META = {
   "Online":        { color: "#60a5fa", emoji: "&#x1F6CD;" },
   "Subscription":  { color: "#c084fc", emoji: "&#x1F514;" },
   "Apparel":        { color: "#f472b6", emoji: "&#x1F455;" },
+  "Pharmacy":       { color: "#34d399", emoji: "&#x1F48A;" },
+  "Hair":           { color: "#c084fc", emoji: "&#x2702;" },
+  "Travel":         { color: "#38bdf8", emoji: "&#x2708;" },
+  "Clothes":        { color: "#f472b6", emoji: "&#x1F455;" },
+  "Dental":         { color: "#34d399", emoji: "&#x1F9B7;" },
+  "Car":            { color: "#64748b", emoji: "&#x1F697;" },
 };
 
 const TRANSACTIONS = [
@@ -2913,6 +2911,5 @@ Return exactly:
 }
 
 </script>
-
 </body>
 </html>
