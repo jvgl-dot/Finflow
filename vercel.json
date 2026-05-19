@@ -1,5 +1,7 @@
 {
-  "routes": [
-    { "src": "/api/add", "dest": "/API/add.js" }
-  ]
+  "functions": {
+    "API/add.js": {
+      "runtime": "@vercel/node@3.0.0"
+    }
+  }
 }
