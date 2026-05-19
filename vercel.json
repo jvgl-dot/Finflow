@@ -1,9 +1,4 @@
 {
-  "functions": {
-    "API/add.js": {
-      "runtime": "edge"
-    }
-  },
   "routes": [
     { "src": "/api/add", "dest": "/API/add.js" }
   ]
