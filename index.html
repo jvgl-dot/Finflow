@@ -788,7 +788,7 @@ body {
           <canvas id="inst-chart" height="160" style="display:block"></canvas>
         </div>
         <!-- Fade edges -->
-        <div style="position:absolute;top:0;right:0;width:32px;height:100%;background:linear-gradient(to left,#0a0a0f,transparent);pointer-events:none"></div>
+        <div id="chart-fade" style="position:absolute;top:0;right:0;width:32px;height:100%;background:linear-gradient(to left,var(--bg),transparent);pointer-events:none"></div>
       </div>
       <div id="inst-chart-legend" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px"></div>
 
@@ -1939,7 +1939,7 @@ function buildInstallments() {
   [[active,'Plans','#a594ff'],[fmtShort(totalMonthly),'This month','#f26b6b'],[fmtShort(totalRemaining),'Total left','#f5c842']].forEach(([val,lbl,col])=>{
     const d = document.createElement('div');
     d.style.cssText = 'background:var(--bg2);border:1.5px solid var(--border2);border-radius:14px;padding:12px 10px;text-align:center';
-    d.innerHTML = `<div style="font-size:9px;color:#6b6b80;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">${lbl}</div><div style="font-size:18px;font-weight:800;color:${col}">${val}</div>`;
+    d.innerHTML = `<div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">${lbl}</div><div style="font-size:18px;font-weight:800;color:${col}">${val}</div>`;
     strip.appendChild(d);
   });
 
@@ -2138,20 +2138,20 @@ function buildInstallments() {
 
     const left = document.createElement('div');
     const nameEl = document.createElement('div');
-    nameEl.style.cssText = 'font-size:13px;font-weight:700;color:#f0f0f5;margin-bottom:2px';
+    nameEl.style.cssText = 'font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px';
     nameEl.textContent = inst.name;
     const descEl = document.createElement('div');
-    descEl.style.cssText = "font-family:'DM Mono',monospace;font-size:10px;color:#6b6b80";
+    descEl.style.cssText = "font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)";
     descEl.textContent = (inst.description || inst.desc || cat) + ' · ' + cat;
     left.appendChild(nameEl); left.appendChild(descEl);
 
     const right = document.createElement('div');
     right.style.textAlign = 'right';
     const monthly = document.createElement('div');
-    monthly.style.cssText = "font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:#f0f0f5";
+    monthly.style.cssText = "font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:var(--text)";
     monthly.textContent = fmt(inst.monthly) + '/mo';
     const remaining = document.createElement('div');
-    remaining.style.cssText = `font-family:'DM Mono',monospace;font-size:10px;color:${isLast?'#f5c842':isSoon?'#f5c842':'#6b6b80'}`;
+    remaining.style.cssText = `font-family:'DM Mono',monospace;font-size:10px;color:${isLast?'#f5c842':isSoon?'#f5c842':'var(--muted)'}`;
     remaining.textContent = isLast ? '🎯 Last one!' : rem + ' left · ' + fmt(rem * inst.monthly);
     right.appendChild(monthly); right.appendChild(remaining);
 
@@ -2184,7 +2184,7 @@ function buildInstallments() {
       dotsLeft.appendChild(more);
     }
     const counter = document.createElement('div');
-    counter.style.cssText = "font-family:'DM Mono',monospace;font-size:10px;color:#6b6b80";
+    counter.style.cssText = "font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)";
     counter.textContent = `${cur}/${tot}`;
     dots.appendChild(dotsLeft); dots.appendChild(counter);
     card.appendChild(dots);
