@@ -44,6 +44,8 @@
   --safe-top:    env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 
+  color-scheme: dark;
+
   /* category colors */
   --c-food:        #3ecf8e;
   --c-home:        #7c6af7;
@@ -62,6 +64,56 @@
   --c-fuel:        #fbbf24;
   --c-online:      #60a5fa;
   --c-subscription:#c084fc;
+}
+
+/* ── LIGHT MODE ─────────────────────────────────────── */
+body.light-mode {
+  color-scheme: light;
+}
+body.light-mode,
+body.light-mode #app {
+  --bg:      #f5f5fa;
+  --bg2:     #ffffff;
+  --bg3:     #eeeef5;
+  --border:  #00000012;
+  --border2: #d0d0e0;
+  --text:    #0a0a1a;
+  --muted:   #888899;
+  --muted2:  #666677;
+  --accent:  #6c5ce7;
+  --accent2: #8b7ff0;
+  --green:   #00b894;
+  --red:     #e84057;
+  --yellow:  #e6a817;
+}
+body.light-mode html,
+body.light-mode { background: #f5f5fa; }
+body.light-mode #app { background: #f5f5fa; box-shadow: 0 0 40px #00000015; }
+body.light-mode .kpi { background: #ffffff; border-color: #d0d0e0; }
+body.light-mode .card { background: #ffffff; border-color: #d0d0e0; }
+body.light-mode .card-sm { background: #eeeef5; border-color: #d0d0e0; }
+body.light-mode .nav { background: #ffffff; border-color: #e0e0ec; }
+body.light-mode .nav-item { color: #888899; }
+body.light-mode .nav-item.active { color: #6c5ce7; }
+body.light-mode .section-title { color: #444455; }
+body.light-mode .tx-row { border-color: #eeeeee; }
+body.light-mode .inst-item { background: #ffffff; border-color: #d0d0e0; }
+body.light-mode .detail-page { background: #f5f5fa; }
+body.light-mode .detail-header { border-color: #e0e0ec; }
+body.light-mode .kpi-label { color: #888899; }
+body.light-mode .kpi-sub { color: #888899; }
+body.light-mode .legend-item { border-color: #eeeeee; }
+body.light-mode .cf-row { border-color: #eeeeee; }
+body.light-mode .header-month {
+  background: #eeeef5;
+  border-color: #d0d0e0;
+  color: #666677;
+}
+body.light-mode .header-logo {
+  background: linear-gradient(135deg, #6c5ce7, #00b894);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -646,7 +698,16 @@ body {
 <div id="app">
   <!-- HEADER -->
   <div class="header">
-    <div class="header-logo">Finflow</div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div class="header-logo">Finflow</div>
+      <button onclick="toggleTheme()" id="theme-btn" style="
+        width:28px;height:28px;border-radius:50%;
+        background:var(--bg3);border:1.5px solid var(--border2);
+        display:flex;align-items:center;justify-content:center;
+        cursor:pointer;font-size:14px;flex-shrink:0;
+        transition:background .2s,border-color .2s;
+      ">☀️</button>
+    </div>
     <div class="header-month">June 2026</div>
   </div>
 
@@ -658,8 +719,8 @@ body {
       <div class="kpi-row">
         <div class="kpi kpi-clickable kpi-wide" onclick="openKpiDetail('card')">
           <div class="kpi-label">Credit Card ›</div>
-          <div class="kpi-value kpi-negative" id="kpi-card">R$ 7,234</div>
-          <div class="kpi-sub">45% of salary · due 7th</div>
+          <div class="kpi-value kpi-negative" id="kpi-card">R$ 7,436</div>
+          <div class="kpi-sub">46% of salary · due 7th</div>
         </div>
         <div class="kpi kpi-clickable kpi-wide" onclick="openKpiDetail('fixed')">
           <div class="kpi-label">Fixed Costs ›</div>
@@ -1035,6 +1096,35 @@ var FIXED_COSTS = [
   {id:5, label:"Pet",      sub:"Food",                    val:315,  color:"#fb923c"},
   {id:6, label:"Pet",      sub:"Bath",                    val:202,  color:"#fb923c"},
 ];
+
+
+// ═══════════════════════════════════════════════════════
+// THEME TOGGLE
+// ═══════════════════════════════════════════════════════
+function toggleTheme() {
+  const isLight = document.body.classList.toggle('light-mode');
+  const btn = document.getElementById('theme-btn');
+  btn.textContent = isLight ? '🌙' : '☀️';
+  // persist preference
+  try { localStorage.setItem('finflow_theme', isLight ? 'light' : 'dark'); } catch(e) {}
+  // redraw canvas elements
+  buildDonut();
+  buildInstallments();
+}
+
+// Apply saved theme on load
+(function() {
+  try {
+    const saved = localStorage.getItem('finflow_theme');
+    if (saved === 'light') {
+      document.body.classList.add('light-mode');
+      document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('theme-btn');
+        if (btn) btn.textContent = '🌙';
+      });
+    }
+  } catch(e) {}
+})();
 
 // ═══════════════════════════════════════════════════════
 // SAFARI DETAIL PAGE CONSTRAINT
