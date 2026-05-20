@@ -104,6 +104,23 @@ body.light-mode .kpi-label { color: #888899; }
 body.light-mode .kpi-sub { color: #888899; }
 body.light-mode .legend-item { border-color: #eeeeee; }
 body.light-mode .cf-row { border-color: #eeeeee; }
+body.light-mode .header { background: #f5f5fa; }
+body.light-mode #invest-summary-cards > div { background: #ffffff !important; border-color: #d0d0e0 !important; }
+body.light-mode #invest-list > div { color: #0a0a1a !important; }
+body.light-mode #invest-list { background: #ffffff; border-color: #d0d0e0; }
+body.light-mode .section-title { color: #333344 !important; }
+body.light-mode .kpi-value { color: #0a0a1a; }
+body.light-mode .cf-amount { color: #0a0a1a; }
+body.light-mode .cf-label { color: #333344; }
+body.light-mode .f-input { background: #f0f0f8; border-color: #d0d0e0; color: #0a0a1a; }
+body.light-mode .submit-btn { background: linear-gradient(135deg,#6c5ce7,#8b7ff0); }
+body.light-mode #add-modal,
+body.light-mode #edit-tx-modal,
+body.light-mode #add-invest-modal,
+body.light-mode #fab-chooser,
+body.light-mode #edit-fixed-modal { background: #ffffff; border-color: #d0d0e0; }
+body.light-mode .type-btn { background: #eeeef5; border-color: #d0d0e0; color: #333344; }
+body.light-mode .type-btn.active-type { background: #6c5ce722; border-color: #6c5ce7; color: #6c5ce7; }
 body.light-mode .header-month {
   background: #eeeef5;
   border-color: #d0d0e0;
@@ -974,6 +991,86 @@ body {
     </div>
   </div>
 
+  <!-- ADD INVESTMENT MODAL -->
+  <div id="add-invest-overlay" onclick="closeAddInvestment()" style="position:fixed;inset:0;background:#000000cc;z-index:200;opacity:0;pointer-events:none;transition:opacity .25s;"></div>
+  <div id="add-invest-modal" style="
+    position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);
+    width:100%;max-width:480px;z-index:201;
+    background:var(--bg2);border-radius:24px 24px 0 0;
+    border-top:1px solid var(--border2);
+    padding:0 20px calc(var(--safe-bottom) + 28px);
+    transition:transform .35s cubic-bezier(.4,0,.2,1);
+    max-height:90vh;overflow-y:auto;
+  ">
+    <div style="display:flex;justify-content:center;padding:12px 0 4px">
+      <div style="width:36px;height:4px;background:var(--border2);border-radius:99px"></div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0 20px">
+      <div style="font-size:18px;font-weight:800;color:var(--text)">Add Investment</div>
+      <div onclick="closeAddInvestment()" style="width:32px;height:32px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--muted2)">✕</div>
+    </div>
+
+    <!-- Mode toggle -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px">
+      <div id="invest-mode-existing" onclick="setInvestMode('existing')" style="padding:10px;text-align:center;border-radius:12px;cursor:pointer;font-size:13px;font-weight:700;background:var(--accent);color:#fff;border:1.5px solid var(--accent)">Add to Existing</div>
+      <div id="invest-mode-new" onclick="setInvestMode('new')" style="padding:10px;text-align:center;border-radius:12px;cursor:pointer;font-size:13px;font-weight:700;background:var(--bg3);color:var(--muted2);border:1.5px solid var(--border2)">New Investment</div>
+    </div>
+
+    <!-- Existing mode -->
+    <div id="invest-existing-fields" style="display:flex;flex-direction:column;gap:14px">
+      <div>
+        <div class="f-label">Select Investment</div>
+        <div id="invest-picker" style="display:flex;flex-direction:column;gap:8px;margin-top:6px"></div>
+      </div>
+      <div>
+        <div class="f-label">Amount to Add (R$)</div>
+        <input id="inv-add-amount" type="number" step="0.01" placeholder="0.00" class="f-input" style="font-family:'DM Mono',monospace;font-size:16px;font-weight:600">
+      </div>
+      <div>
+        <div class="f-label">Date</div>
+        <input id="inv-add-date" type="date" class="f-input" style="font-family:'DM Mono',monospace">
+      </div>
+      <button onclick="saveAddToInvestment()" class="submit-btn">Add to Investment</button>
+    </div>
+
+    <!-- New mode -->
+    <div id="invest-new-fields" style="display:none;flex-direction:column;gap:14px">
+      <div>
+        <div class="f-label">Name</div>
+        <input id="inv-new-name" type="text" placeholder="e.g. CDB Nubank" class="f-input">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <div class="f-label">Type</div>
+          <select id="inv-new-type" class="f-input" style="font-family:'DM Mono',monospace;font-size:13px">
+            <option>CDB</option><option>LCI</option><option>LCA</option>
+            <option>Tesouro Direto</option><option>Fundos</option>
+            <option>Ações</option><option>FII</option><option selected>Outro</option>
+          </select>
+        </div>
+        <div>
+          <div class="f-label">Rate (% a.a.)</div>
+          <input id="inv-new-rate" type="number" step="0.01" placeholder="12.5" class="f-input" style="font-family:'DM Mono',monospace">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <div class="f-label">Amount Invested (R$)</div>
+          <input id="inv-new-amount" type="number" step="0.01" placeholder="0.00" class="f-input" style="font-family:'DM Mono',monospace;font-size:14px;font-weight:600">
+        </div>
+        <div>
+          <div class="f-label">Current Value (R$)</div>
+          <input id="inv-new-current" type="number" step="0.01" placeholder="0.00" class="f-input" style="font-family:'DM Mono',monospace;font-size:14px;font-weight:600">
+        </div>
+      </div>
+      <div>
+        <div class="f-label">Broker / Notes</div>
+        <input id="inv-new-broker" type="text" placeholder="e.g. Itaú, Rico, XP" class="f-input">
+      </div>
+      <button onclick="saveNewInvestment()" class="submit-btn">Create Investment</button>
+    </div>
+  </div>
+
   <!-- API KEY SETUP -->
   <div id="apikey-overlay" style="position:fixed;inset:0;background:#000000ee;z-index:200;display:none;align-items:flex-end;justify-content:center;padding:0;">
     <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:24px;width:100%;max-width:380px">
@@ -1033,7 +1130,35 @@ body {
   </div>
 
   <!-- FAB (inside app for proper positioning) -->
-  <button id="fab" onclick="openAddModal()" style="
+  <!-- FAB action chooser overlay -->
+  <div id="fab-chooser-overlay" onclick="closeFabChooser()" style="position:fixed;inset:0;background:#000000aa;z-index:200;opacity:0;pointer-events:none;transition:opacity .2s"></div>
+  <div id="fab-chooser" style="
+    position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);
+    width:100%;max-width:480px;z-index:201;
+    background:var(--bg2);border-radius:24px 24px 0 0;
+    border-top:1px solid var(--border2);
+    padding:20px 20px calc(var(--safe-bottom) + 28px);
+    transition:transform .3s cubic-bezier(.4,0,.2,1);
+  ">
+    <div style="display:flex;justify-content:center;margin-bottom:16px">
+      <div style="width:36px;height:4px;background:var(--border2);border-radius:99px"></div>
+    </div>
+    <div style="font-size:16px;font-weight:800;margin-bottom:16px;color:var(--text)">What do you want to add?</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div onclick="closeFabChooser();openAddModal();" style="background:var(--bg3);border:1.5px solid var(--border2);border-radius:16px;padding:18px 14px;cursor:pointer;text-align:center;transition:border-color .15s" onmousedown="this.style.borderColor='var(--accent)'">
+        <div style="font-size:28px;margin-bottom:8px">💳</div>
+        <div style="font-size:13px;font-weight:800;color:var(--text)">Add Spend</div>
+        <div style="font-size:10px;color:var(--muted2);font-family:'DM Mono',monospace;margin-top:3px">Credit card or cash</div>
+      </div>
+      <div onclick="closeFabChooser();openAddInvestment();" style="background:var(--bg3);border:1.5px solid var(--border2);border-radius:16px;padding:18px 14px;cursor:pointer;text-align:center;transition:border-color .15s" onmousedown="this.style.borderColor='var(--green)'">
+        <div style="font-size:28px;margin-bottom:8px">📈</div>
+        <div style="font-size:13px;font-weight:800;color:var(--text)">Add Investment</div>
+        <div style="font-size:10px;color:var(--muted2);font-family:'DM Mono',monospace;margin-top:3px">New or existing</div>
+      </div>
+    </div>
+  </div>
+
+  <button id="fab" onclick="openFabChooser()" style="
     position:absolute;right:20px;bottom:80px;
     width:56px;height:56px;border-radius:50%;
     background:linear-gradient(135deg,var(--accent),var(--accent2));
@@ -1250,6 +1375,133 @@ async function deleteTransaction() {
   buildStatement(TRANSACTIONS);
   buildDonut();
   updateCardKpi();
+}
+
+
+// ═══════════════════════════════════════════════════════
+// FAB CHOOSER
+// ═══════════════════════════════════════════════════════
+function openFabChooser() {
+  document.getElementById('fab-chooser-overlay').style.opacity = '1';
+  document.getElementById('fab-chooser-overlay').style.pointerEvents = 'all';
+  document.getElementById('fab-chooser').style.transform = 'translateX(-50%) translateY(0)';
+}
+function closeFabChooser() {
+  document.getElementById('fab-chooser-overlay').style.opacity = '0';
+  document.getElementById('fab-chooser-overlay').style.pointerEvents = 'none';
+  document.getElementById('fab-chooser').style.transform = 'translateX(-50%) translateY(100%)';
+}
+
+// ═══════════════════════════════════════════════════════
+// ADD INVESTMENT MODAL
+// ═══════════════════════════════════════════════════════
+let selectedInvestId = null;
+let investMode = 'existing';
+
+function setInvestMode(mode) {
+  investMode = mode;
+  const existBtn = document.getElementById('invest-mode-existing');
+  const newBtn   = document.getElementById('invest-mode-new');
+  const existFields = document.getElementById('invest-existing-fields');
+  const newFields   = document.getElementById('invest-new-fields');
+  if (mode === 'existing') {
+    existBtn.style.cssText = 'padding:10px;text-align:center;border-radius:12px;cursor:pointer;font-size:13px;font-weight:700;background:var(--accent);color:#fff;border:1.5px solid var(--accent)';
+    newBtn.style.cssText   = 'padding:10px;text-align:center;border-radius:12px;cursor:pointer;font-size:13px;font-weight:700;background:var(--bg3);color:var(--muted2);border:1.5px solid var(--border2)';
+    existFields.style.display = 'flex';
+    newFields.style.display   = 'none';
+  } else {
+    newBtn.style.cssText   = 'padding:10px;text-align:center;border-radius:12px;cursor:pointer;font-size:13px;font-weight:700;background:var(--green);color:#fff;border:1.5px solid var(--green)';
+    existBtn.style.cssText = 'padding:10px;text-align:center;border-radius:12px;cursor:pointer;font-size:13px;font-weight:700;background:var(--bg3);color:var(--muted2);border:1.5px solid var(--border2)';
+    existFields.style.display = 'none';
+    newFields.style.display   = 'flex';
+  }
+}
+
+function openAddInvestment() {
+  selectedInvestId = null;
+  investMode = 'existing';
+  setInvestMode('existing');
+  // Populate investment picker
+  const picker = document.getElementById('invest-picker');
+  picker.innerHTML = '';
+  INVESTMENTS.forEach((inv, idx) => {
+    const color = TYPE_COLORS[inv.type] || '#94a3b8';
+    const item = document.createElement('div');
+    item.style.cssText = `display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;border:1.5px solid var(--border2);cursor:pointer;background:var(--bg3);transition:border-color .15s`;
+    item.innerHTML = `
+      <div style="width:10px;height:10px;border-radius:50%;background:${color};flex-shrink:0"></div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700;color:var(--text)">${inv.name}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted2)">${inv.type} · R$ ${(inv.currentVal||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
+      </div>
+    `;
+    item.onclick = () => {
+      selectedInvestId = idx;
+      picker.querySelectorAll('div[data-inv]').forEach(el => {
+        el.style.borderColor = 'var(--border2)';
+        el.style.background = 'var(--bg3)';
+      });
+      item.style.borderColor = color;
+      item.style.background = color + '18';
+    };
+    item.setAttribute('data-inv', idx);
+    picker.appendChild(item);
+  });
+  // Set today's date
+  const today = new Date();
+  document.getElementById('inv-add-date').value = today.toISOString().split('T')[0];
+  document.getElementById('add-invest-overlay').style.opacity = '1';
+  document.getElementById('add-invest-overlay').style.pointerEvents = 'all';
+  document.getElementById('add-invest-modal').style.transform = 'translateX(-50%) translateY(0)';
+}
+
+function closeAddInvestment() {
+  document.getElementById('add-invest-overlay').style.opacity = '0';
+  document.getElementById('add-invest-overlay').style.pointerEvents = 'none';
+  document.getElementById('add-invest-modal').style.transform = 'translateX(-50%) translateY(100%)';
+}
+
+function saveAddToInvestment() {
+  if (selectedInvestId === null) { alert('Please select an investment.'); return; }
+  const amount = parseFloat(document.getElementById('inv-add-amount').value);
+  if (!amount || isNaN(amount)) { alert('Please enter an amount.'); return; }
+  // Update the investment current value
+  INVESTMENTS[selectedInvestId].currentVal = (INVESTMENTS[selectedInvestId].currentVal || 0) + amount;
+  buildInvestmentsPage();
+  closeAddInvestment();
+  // Show confirm
+  const fab = document.getElementById('fab');
+  fab.style.background = 'linear-gradient(135deg,var(--green),#2db87a)';
+  fab.textContent = '✓';
+  setTimeout(() => {
+    fab.style.background = 'linear-gradient(135deg,var(--accent),var(--accent2))';
+    fab.textContent = '+';
+  }, 1800);
+}
+
+function saveNewInvestment() {
+  const name = document.getElementById('inv-new-name').value.trim();
+  const type = document.getElementById('inv-new-type').value;
+  const rate = parseFloat(document.getElementById('inv-new-rate').value) || null;
+  const amount = parseFloat(document.getElementById('inv-new-amount').value) || 0;
+  const current = parseFloat(document.getElementById('inv-new-current').value) || amount;
+  const broker = document.getElementById('inv-new-broker').value.trim();
+  if (!name) { alert('Please enter a name.'); return; }
+  INVESTMENTS.push({
+    name, type, rate,
+    currentVal: current,
+    profit: current - amount || null,
+    broker
+  });
+  buildInvestmentsPage();
+  closeAddInvestment();
+  const fab = document.getElementById('fab');
+  fab.style.background = 'linear-gradient(135deg,var(--green),#2db87a)';
+  fab.textContent = '✓';
+  setTimeout(() => {
+    fab.style.background = 'linear-gradient(135deg,var(--accent),var(--accent2))';
+    fab.textContent = '+';
+  }, 1800);
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1978,39 +2230,83 @@ function buildCashFlow() {
 function buildForecast() {
   const wrap = document.getElementById('forecast-timeline');
   wrap.innerHTML = '';
+
   FORECAST.forEach((m, i) => {
-    const balColor = m.balance > 0 ? 'var(--green)' : 'var(--red)';
-    const el = document.createElement('div');
-    el.className = 'timeline-month';
-    el.innerHTML = `
-      <div class="timeline-month-header" onclick="this.nextElementSibling.classList.toggle('open')">
-        <div class="timeline-month-name">${m.month}</div>
-        <div style="display:flex;align-items:center;gap:10px">
-          <div style="font-family:'DM Mono',monospace;font-size:11px;color:${balColor}">${m.balance>0?'+':''}${fmtShort(m.balance)}</div>
-          <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted2)">${fmtShort(m.card)}</div>
-          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:var(--muted)"><path d="M6 9l6 6 6-6"/></svg>
-        </div>
-      </div>
-      <div class="timeline-month-body ${i===0?'open':''}">
-        <div class="timeline-inst-row">
-          <span style="color:var(--muted2)">Credit Card</span>
-          <span style="font-family:'DM Mono',monospace;color:var(--red)">${fmt(m.card)}</span>
-        </div>
-        <div class="timeline-inst-row">
-          <span style="color:var(--muted2)">Fixed Costs</span>
-          <span style="font-family:'DM Mono',monospace;color:var(--text)">−R$ 6.300</span>
-        </div>
-        <div class="timeline-inst-row">
-          <span style="color:var(--muted2)">Investment</span>
-          <span style="font-family:'DM Mono',monospace;color:var(--accent2)">${fmt(m.invest)}</span>
-        </div>
-        <div class="timeline-inst-row" style="font-weight:700">
-          <span>Free Balance</span>
-          <span style="font-family:'DM Mono',monospace;color:${balColor}">${m.balance>0?'+':''}${fmt(m.balance)}</span>
-        </div>
-      </div>
-    `;
-    wrap.appendChild(el);
+    const balColor = m.balance > 0 ? '#3ecf8e' : '#f26b6b';
+    const card = document.createElement('div');
+    card.style.cssText = `background:var(--bg2);border:1.5px solid var(--border2);border-radius:16px;margin-bottom:10px;overflow:hidden;transition:border-color .2s`;
+
+    // Header row — always visible
+    const header = document.createElement('div');
+    header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer';
+
+    const left = document.createElement('div');
+    const monthName = document.createElement('div');
+    monthName.style.cssText = 'font-size:14px;font-weight:800;color:var(--text)';
+    monthName.textContent = m.month;
+    const cardAmt = document.createElement('div');
+    cardAmt.style.cssText = "font-family:'DM Mono',monospace;font-size:11px;color:var(--muted2);margin-top:2px";
+    cardAmt.textContent = 'Card: ' + fmt(m.card);
+    left.appendChild(monthName);
+    left.appendChild(cardAmt);
+
+    const right = document.createElement('div');
+    right.style.cssText = 'display:flex;align-items:center;gap:10px';
+    const bal = document.createElement('div');
+    bal.style.cssText = `font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:${balColor}`;
+    bal.textContent = (m.balance > 0 ? '+' : '') + fmt(m.balance);
+    const chev = document.createElement('div');
+    chev.style.cssText = 'color:var(--muted2);font-size:12px;transition:transform .2s';
+    chev.textContent = '▶';
+    right.appendChild(bal);
+    right.appendChild(chev);
+
+    header.appendChild(left);
+    header.appendChild(right);
+
+    // Body — expandable detail
+    const body = document.createElement('div');
+    body.style.cssText = 'overflow:hidden;max-height:0;transition:max-height .3s ease';
+
+    const inner = document.createElement('div');
+    inner.style.cssText = 'padding:0 16px 14px;border-top:1px solid var(--border2)';
+
+    const rows = [
+      {label:'Credit Card', val: fmt(m.card),    color:'#f26b6b', prefix:'−'},
+      {label:'Fixed Costs', val: fmt(7137),       color:'#f26b6b', prefix:'−'},
+      {label:'Investment',  val: fmt(m.invest),   color:'#a594ff', prefix:'−'},
+      {label:'Free Balance',val: fmt(m.balance),  color: balColor, prefix: m.balance>0?'+':'', bold:true},
+    ];
+
+    rows.forEach((r, ri) => {
+      const row = document.createElement('div');
+      row.style.cssText = `display:flex;justify-content:space-between;align-items:center;padding:9px 0;${ri>0?'border-top:1px solid var(--border)':''}`;
+      const lbl = document.createElement('div');
+      lbl.style.cssText = `font-size:12px;${r.bold?'font-weight:800;color:var(--text)':'color:var(--muted2)'}`;
+      lbl.textContent = r.label;
+      const val = document.createElement('div');
+      val.style.cssText = `font-family:'DM Mono',monospace;font-size:13px;font-weight:${r.bold?800:600};color:${r.color}`;
+      val.textContent = r.prefix + r.val;
+      row.appendChild(lbl);
+      row.appendChild(val);
+      inner.appendChild(row);
+    });
+
+    body.appendChild(inner);
+
+    // Toggle expand
+    let open = i === 0;
+    if (open) { body.style.maxHeight = '300px'; chev.style.transform = 'rotate(90deg)'; card.style.borderColor = 'var(--accent2)'; }
+    header.onclick = () => {
+      open = !open;
+      body.style.maxHeight = open ? '300px' : '0';
+      chev.style.transform = open ? 'rotate(90deg)' : '';
+      card.style.borderColor = open ? 'var(--accent2)' : 'var(--border2)';
+    };
+
+    card.appendChild(header);
+    card.appendChild(body);
+    wrap.appendChild(card);
   });
 }
 
