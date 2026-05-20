@@ -2000,6 +2000,7 @@ async function initApp() {
     buildForecast();
     buildCatChips();
     buildInvestmentsPage();
+    updateCardKpi();
 
   } catch(err) {
     hideLoading();
@@ -2012,10 +2013,67 @@ async function initApp() {
     buildForecast();
     buildCatChips();
     buildInvestmentsPage();
+    updateCardKpi();
   }
 }
 
 initApp();
+
+// ═══════════════════════════════════════════════════════
+// URL PARAMETER HANDLER — for Shortcuts integration
+// Usage: https://finflow-mauve-omega.vercel.app/?add=Lunch,Food,45
+// ═══════════════════════════════════════════════════════
+async function handleURLParams() {
+  const params = new URLSearchParams(window.location.search);
+  const add = params.get('add');
+  if (!add) return;
+
+  const parts = add.split(',').map(p => p.trim());
+  if (parts.length < 3) return;
+
+  const name = parts[0];
+  const cat  = parts[1];
+  const val  = parseFloat(parts[2]);
+  if (!name || !cat || isNaN(val)) return;
+
+  const now  = new Date();
+  const date = String(now.getDate()).padStart(2,'0') + '/' + String(now.getMonth()+1).padStart(2,'0');
+
+  // Show loading indicator
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:#0a0a0fcc;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px';
+  overlay.innerHTML = '<div style="font-size:40px">💾</div><div style="color:#f0f0f5;font-family:DM Mono,monospace;font-size:13px">Saving ' + name + '...</div>';
+  document.body.appendChild(overlay);
+
+  try {
+    const tx = {date, name, cat, val, type:'Manual', p:null, pt:null};
+
+    // Save to Supabase
+    await supa.from('transactions').insert([{
+      date, name, cat, type:'Manual', val, p:null, pt:null
+    }]);
+
+    // Add to local array and refresh UI
+    TRANSACTIONS.unshift(tx);
+    buildStatement(TRANSACTIONS);
+    buildDonut();
+
+    // Show success
+    overlay.innerHTML = '<div style="font-size:40px">✅</div><div style="color:#3ecf8e;font-family:DM Mono,monospace;font-size:13px">' + name + ' · R$ ' + val + ' · ' + cat + '</div>';
+    setTimeout(() => {
+      overlay.remove();
+      // Clear URL params without reloading
+      window.history.replaceState({}, '', window.location.pathname);
+    }, 2000);
+
+  } catch(e) {
+    overlay.innerHTML = '<div style="font-size:40px">❌</div><div style="color:#f26b6b;font-family:DM Mono,monospace;font-size:13px">Error: ' + e.message + '</div>';
+    setTimeout(() => overlay.remove(), 3000);
+  }
+}
+
+// Run after Supabase is ready
+setTimeout(handleURLParams, 2000);
 
 let fixedEditId = null; // null = new
 
@@ -2024,6 +2082,16 @@ function fixedTotal() { return FIXED_COSTS.reduce((a,c)=>a+c.val,0); }
 function updateFixedKpi() {
   const el = document.getElementById('kpi-fixed');
   if (el) el.textContent = 'R$ ' + fixedTotal().toLocaleString('pt-BR',{minimumFractionDigits:0});
+}
+
+function updateCardKpi() {
+  const total = TRANSACTIONS.filter(t => parseFloat(t.val) > 0).reduce((a,t) => a + parseFloat(t.val), 0);
+  const el = document.getElementById('kpi-card');
+  if (el) {
+    el.textContent = 'R$ ' + total.toLocaleString('pt-BR', {minimumFractionDigits:0});
+  }
+  const sub = el ? el.nextElementSibling : null;
+  if (sub) sub.textContent = ((total/16195)*100).toFixed(0) + '% of salary · due 7th';
 }
 
 // ═══════════════════════════════════════════════════════
@@ -2743,7 +2811,7 @@ function submitTransaction() {
     pt: totP
   };
 
-  // Save to Supabase
+  // Save to Supabase transactions
   const toInsert = {date:dateFormatted, name:merchant, cat:selectedCat,
     type:selectedType, val:amount, p:curP||null, pt:totP||null};
 
@@ -2752,9 +2820,38 @@ function submitTransaction() {
     else if (data && data[0]) tx.id = data[0].id;
   });
 
+  // If installment, also add to installments table
+  if (curP && totP && totP > 1) {
+    const newId = Math.max(0, ...INSTALLMENTS.map(i => i.id || 0)) + 1;
+    const instRow = {
+      id: newId,
+      name: merchant,
+      category: selectedCat,
+      description: merchant,
+      current_p: curP,
+      total_p: totP,
+      monthly: amount
+    };
+    supa.from('installments').insert([instRow]).then(({error}) => {
+      if (error) console.error('Installment save error:', error);
+    });
+    // Also add to local INSTALLMENTS array
+    INSTALLMENTS.push({
+      id: newId,
+      name: merchant,
+      category: selectedCat,
+      description: merchant,
+      current: curP,
+      total: totP,
+      monthly: amount
+    });
+    buildInstallments();
+  }
+
   TRANSACTIONS.unshift(tx);
   buildStatement(TRANSACTIONS);
   buildDonut();
+  updateCardKpi();
   closeAddModal();
 
   const fab = document.getElementById('fab');
