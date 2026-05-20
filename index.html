@@ -106,8 +106,14 @@ body.light-mode .legend-item { border-color: #eeeeee; }
 body.light-mode .cf-row { border-color: #eeeeee; }
 body.light-mode .header { background: #f5f5fa; }
 body.light-mode #invest-summary-cards > div { background: #ffffff !important; border-color: #d0d0e0 !important; }
-body.light-mode #invest-list > div { color: #0a0a1a !important; }
+body.light-mode #invest-summary-cards > div div { color: #0a0a1a !important; }
 body.light-mode #invest-list { background: #ffffff; border-color: #d0d0e0; }
+body.light-mode #invest-list * { color: #0a0a1a !important; }
+body.light-mode #invest-list .typeHeader span,
+body.light-mode #invest-list [style*="color:#f0f0f5"] { color: #0a0a1a !important; }
+body.light-mode #invest-list [style*="color:#6b6b80"] { color: #666677 !important; }
+body.light-mode #invest-list [style*="color:#9090a8"] { color: #666677 !important; }
+body.light-mode #invest-list [style*="background:#"] { background: #f5f5fa !important; }
 body.light-mode .section-title { color: #333344 !important; }
 body.light-mode .kpi-value { color: #0a0a1a; }
 body.light-mode .cf-amount { color: #0a0a1a; }
@@ -1279,6 +1285,7 @@ function toggleTheme() {
   // redraw canvas elements
   buildDonut();
   buildInstallments();
+  buildInvestmentsPage();
 }
 
 // Apply saved theme on load
@@ -1931,7 +1938,7 @@ function buildInstallments() {
 
   [[active,'Plans','#a594ff'],[fmtShort(totalMonthly),'This month','#f26b6b'],[fmtShort(totalRemaining),'Total left','#f5c842']].forEach(([val,lbl,col])=>{
     const d = document.createElement('div');
-    d.style.cssText = 'background:#111118;border:1.5px solid #3a3a52;border-radius:14px;padding:12px 10px;text-align:center';
+    d.style.cssText = 'background:var(--bg2);border:1.5px solid var(--border2);border-radius:14px;padding:12px 10px;text-align:center';
     d.innerHTML = `<div style="font-size:9px;color:#6b6b80;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">${lbl}</div><div style="font-size:18px;font-weight:800;color:${col}">${val}</div>`;
     strip.appendChild(d);
   });
@@ -1956,6 +1963,10 @@ function buildInstallments() {
 
   function drawChart(highlight) {
     ctx.clearRect(0, 0, totalW, CHART_H);
+    // Draw background
+    const isLightMode = document.body.classList.contains('light-mode');
+    ctx.fillStyle = isLightMode ? '#f5f5fa' : '#0a0a0f';
+    ctx.fillRect(0, 0, totalW, CHART_H);
     const plotH = CHART_H - PAD_B - PAD_T;
 
     MONTHS.forEach((month, mi) => {
@@ -1974,14 +1985,15 @@ function buildInstallments() {
         ctx.save();
         ctx.beginPath();
         ctx.roundRect ? ctx.roundRect(x, yOffset, BAR_W, bh, [4,4,0,0]) : (ctx.rect(x, yOffset, BAR_W, bh));
-        ctx.fillStyle = catColors2[cat] + (highlight !== null && !isHigh ? '55' : 'ee');
+        const isLight = document.body.classList.contains('light-mode');
+        ctx.fillStyle = catColors2[cat] + (highlight !== null && !isHigh ? (isLight?'66':'55') : (isLight?'ff':'ee'));
         ctx.fill();
         ctx.restore();
       });
 
       // Month label
       ctx.save();
-      ctx.fillStyle = isHigh ? '#f0f0f5' : '#6b6b80';
+      ctx.fillStyle = isHigh ? (document.body.classList.contains('light-mode') ? '#0a0a1a' : '#f0f0f5') : '#6b6b80';
       ctx.font = (isHigh ? 'bold ' : '') + '11px -apple-system,sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText(month, x + BAR_W/2, CHART_H - 14);
@@ -1990,7 +2002,7 @@ function buildInstallments() {
       // Total label above bar
       if (total > 0) {
         ctx.save();
-        ctx.fillStyle = isHigh ? '#f0f0f5' : '#6b6b8088';
+        ctx.fillStyle = isHigh ? (document.body.classList.contains('light-mode') ? '#0a0a1a' : '#f0f0f5') : (document.body.classList.contains('light-mode') ? '#66667799' : '#6b6b8088');
         ctx.font = '9px ui-monospace,monospace';
         ctx.textAlign = 'center';
         const barTopY = CHART_H - PAD_B - (total/maxTotal)*plotH;
@@ -2118,7 +2130,7 @@ function buildInstallments() {
     const isSoon = rem === 1;
 
     const card = document.createElement('div');
-    card.style.cssText = `background:#111118;border:1.5px solid ${isLast?'#f5c84244':isSoon?'#f5c84244':'#3a3a52'};border-radius:14px;padding:14px;`;
+    card.style.cssText = `background:var(--bg2);border:1.5px solid ${isLast?'#f5c84244':isSoon?'#f5c84244':'var(--border2)'};border-radius:14px;padding:14px;`;
 
     // top row
     const top = document.createElement('div');
@@ -2148,7 +2160,7 @@ function buildInstallments() {
 
     // progress bar
     const track = document.createElement('div');
-    track.style.cssText = 'height:6px;background:#1a1a24;border-radius:99px;overflow:hidden;margin-bottom:6px';
+    track.style.cssText = 'height:6px;background:var(--bg3);border-radius:99px;overflow:hidden;margin-bottom:6px';
     const fill2 = document.createElement('div');
     fill2.style.cssText = `height:100%;border-radius:99px;background:${color};width:${pct}%;transition:width .6s ease`;
     track.appendChild(fill2); card.appendChild(track);
@@ -2162,7 +2174,7 @@ function buildInstallments() {
     for (let i = 0; i < maxDots; i++) {
       const d = document.createElement('div');
       const isPaid = i < cur;
-      d.style.cssText = `width:${tot>8?'6px':'8px'};height:${tot>8?'6px':'8px'};border-radius:50%;background:${isPaid?color:'#1a1a24'};border:1px solid ${isPaid?color:'#3a3a52'}`;
+      d.style.cssText = `width:${tot>8?'6px':'8px'};height:${tot>8?'6px':'8px'};border-radius:50%;background:${isPaid?color:'var(--bg3)'};border:1px solid ${isPaid?color:'var(--border2)'}`;
       dotsLeft.appendChild(d);
     }
     if (tot > 12) {
@@ -3182,9 +3194,9 @@ function buildInvestmentsPage() {
 
   summaries.forEach(s => {
     const d = document.createElement('div');
-    d.style.cssText = 'background:#1a1a24;border-radius:10px;padding:12px;border:1.5px solid #3a3a52';
+    d.style.cssText = 'background:var(--bg3);border-radius:10px;padding:12px;border:1.5px solid var(--border2)';
     const lbl = document.createElement('div');
-    lbl.style.cssText = "font-size:9px;color:#6b6b80;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px";
+    lbl.style.cssText = "font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px";
     lbl.textContent = s.label;
     const val = document.createElement('div');
     val.style.cssText = `font-size:18px;font-weight:800;color:${s.color}`;
@@ -3207,16 +3219,16 @@ function buildInvestmentsPage() {
   Object.entries(grouped).sort().forEach(([type, items]) => {
     // type header
     const typeHeader = document.createElement('div');
-    typeHeader.style.cssText = 'display:flex;align-items:center;gap:8px;padding:12px 0 6px;border-bottom:1px solid #3a3a52';
+    typeHeader.style.cssText = 'display:flex;align-items:center;gap:8px;padding:12px 0 6px;border-bottom:1px solid var(--border2)';
     const dot = document.createElement('div');
     dot.style.cssText = 'width:8px;height:8px;border-radius:50%;flex-shrink:0';
     dot.style.background = TYPE_COLORS[type] || '#94a3b8';
     dot.style.flexShrink = '0';
     const typeLabel = document.createElement('span');
-    typeLabel.style.cssText = 'font-size:11px;font-weight:700;color:#9090a8;text-transform:uppercase;letter-spacing:.8px';
+    typeLabel.style.cssText = 'font-size:11px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.8px';
     typeLabel.textContent = type;
     const typeTotal = document.createElement('span');
-    typeTotal.style.cssText = "font-family:'DM Mono',monospace;font-size:11px;color:#9090a8;margin-left:auto";
+    typeTotal.style.cssText = "font-family:'DM Mono',monospace;font-size:11px;color:var(--muted2);margin-left:auto";
     const t = items.reduce((a,i)=>a+(i.currentVal||0),0);
     typeTotal.textContent = 'R$ ' + t.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
     typeHeader.appendChild(dot); typeHeader.appendChild(typeLabel); typeHeader.appendChild(typeTotal);
@@ -3225,7 +3237,7 @@ function buildInvestmentsPage() {
     items.forEach(inv => {
       const color = TYPE_COLORS[inv.type] || '#94a3b8';
       const row = document.createElement('div');
-      row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #1a1a24';
+      row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)';
 
       const dot2 = document.createElement('div');
       dot2.style.cssText = 'width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:800';
@@ -3236,10 +3248,10 @@ function buildInvestmentsPage() {
       info.style.flex = '1';
       info.style.minWidth = '0';
       const name = document.createElement('div');
-      name.style.cssText = 'font-size:13px;font-weight:700;color:#f0f0f5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';
+      name.style.cssText = 'font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis';
       name.textContent = inv.name;
       const meta = document.createElement('div');
-      meta.style.cssText = "font-family:'DM Mono',monospace;font-size:10px;color:#6b6b80;margin-top:2px";
+      meta.style.cssText = "font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px";
       meta.textContent = inv.rate ? inv.rate + '% a.a.' : inv.type;
       info.appendChild(name); info.appendChild(meta);
 
@@ -3247,7 +3259,7 @@ function buildInvestmentsPage() {
       right.style.textAlign = 'right';
       right.style.flexShrink = '0';
       const valEl = document.createElement('div');
-      valEl.style.cssText = "font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:#f0f0f5";
+      valEl.style.cssText = "font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:var(--text)";
       valEl.textContent = 'R$ ' + (inv.currentVal||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
       right.appendChild(valEl);
       if (inv.profit != null) {
